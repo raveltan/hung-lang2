@@ -7,6 +7,15 @@ enum TType {
   // Operators
   EQUAL,
   ADD,
+  SUB,
+  NOT,
+  MUL,
+  DIV,
+  LESSER,
+  BIGGER,
+  //Double Operators
+  DOUBLE_EQUAL,
+  NOT_EQUAL,
   // Delimiters
   COMMA,
   SEMICOLON,
@@ -17,6 +26,11 @@ enum TType {
   // Keywords
   METHOD,
   VAR,
+  TRUE,
+  FALSE,
+  IF,
+  ELSE,
+  RETURN,
 }
 
 class Token {
@@ -40,6 +54,21 @@ class Token {
         {
           return TType.VAR;
         }
+      case 'true':{
+        return TType.TRUE;
+      }
+      case 'false':{
+        return TType.FALSE;
+      }
+      case 'if':{
+        return TType.IF;
+      }
+      case 'else':{
+        return TType.ELSE;
+      }
+      case 'return':{
+        return TType.RETURN;
+      }
       default:
         {
           return TType.IDENTIFIER;

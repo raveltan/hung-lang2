@@ -32,12 +32,54 @@ class Lexer {
     switch (_current) {
       case '=':
         {
-          result = Token(TType.EQUAL);
+          // Add condition for double operator
+          if (_seeNextChar() == '=') {
+            _readNextCharacter();
+            result = Token(TType.DOUBLE_EQUAL);
+          } else {
+            result = Token(TType.EQUAL);
+          }
           break;
         }
       case '+':
         {
           result = Token(TType.ADD);
+          break;
+        }
+      case '-':
+        {
+          result = Token(TType.SUB);
+          break;
+        }
+      case '!':
+        {
+          // Add new condition for double operator
+          if (_seeNextChar() == '='){
+            _readNextCharacter();
+            result = Token(TType.NOT_EQUAL);
+          }else{
+            result = Token(TType.NOT);
+          }
+          break;
+        }
+      case '*':
+        {
+          result = Token(TType.MUL);
+          break;
+        }
+      case '/':
+        {
+          result = Token(TType.DIV);
+          break;
+        }
+      case '<':
+        {
+          result = Token(TType.LESSER);
+          break;
+        }
+      case '>':
+        {
+          result = Token(TType.BIGGER);
           break;
         }
       case ',':
@@ -101,6 +143,10 @@ class Lexer {
     return result;
   }
 
+  // Get the next character without advancing
+  String _seeNextChar() =>
+      _readPosition >= _input.length ? '' : _input[_readPosition];
+
   bool _isNumber(String current) {
     // Space and empty checking is done on the top,
     // We need to recheck here
@@ -114,10 +160,8 @@ class Lexer {
     // Space and empty checking is done on the top,
     // We need to recheck here
     if (current == '' || current == ' ') return false;
-    return current.codeUnitAt(0) >= 65 &&
-        current.codeUnitAt(0) <= 90 ||
-        current.codeUnitAt(0) >= 97 &&
-        current.codeUnitAt(0) <= 122;
+    return current.codeUnitAt(0) >= 65 && current.codeUnitAt(0) <= 90 ||
+        current.codeUnitAt(0) >= 97 && current.codeUnitAt(0) <= 122;
   }
 
   String _readIdentifier() {
