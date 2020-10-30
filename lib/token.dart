@@ -1,10 +1,9 @@
 // Definition of available token types
-enum TType{
+enum TType {
   ILLEGAL,
   EOF,
   IDENTIFIER,
-
-  INTEGER,
+  NUMBER,
   // Operators
   EQUAL,
   ADD,
@@ -20,9 +19,33 @@ enum TType{
   VAR,
 }
 
-class Token{
+class Token {
   final TType tokenType;
-  Token(this.tokenType);
+  String content;
+
+  Token(this.tokenType, {this.content = ''});
+
+  Token.fromIdentifier(String identifier)
+      : tokenType = _keywordParser(identifier),
+        content = identifier;
+
+  static TType _keywordParser(String identifier) {
+    // Check if an identifier is a keyword.
+    switch (identifier) {
+      case 'f':
+        {
+          return TType.METHOD;
+        }
+      case 'var':
+        {
+          return TType.VAR;
+        }
+      default:
+        {
+          return TType.IDENTIFIER;
+        }
+    }
+  }
 
   @override
   bool operator ==(Object other) {
@@ -31,7 +54,6 @@ class Token{
 
   @override
   String toString() {
-    return tokenType.toString();
+    return '($tokenType,$content)';
   }
 }
-
