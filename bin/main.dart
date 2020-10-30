@@ -6,6 +6,7 @@ void main(List<String> arguments) {
   var showToken = arguments.contains('--token');
   var dartVersion = Platform.version;
   print('Hung Lang 2 (v0.0.1)');
-  print('Based on Dart $dartVersion');
+  print('Compiled on Dart $dartVersion');
+  print('Written by Ravel Tanjaya (陈光雄)');
   Repl.start();
 }

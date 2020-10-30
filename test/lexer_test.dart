@@ -3,7 +3,6 @@ import 'package:hung_lang2/token.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Lexing tests', () {
     test('Test for basic operator and delimiter', () {
       var input = '=+,(){};';
       var result = [
@@ -19,7 +18,7 @@ void main() {
       var lexer = Lexer(input);
       for (var current in result) {
         var t = lexer.nextToken();
-        expect(t, equals(current));
+        expect(current,equals(t));
       }
     });
     test('Test for keyword (true,false,if,else,return)',(){
@@ -30,24 +29,24 @@ void main() {
       }
       ''';
       var result = [
-        Token(TType.IF),
-        Token(TType.TRUE),
+        Token.fromIdentifier('if'),
+        Token.fromIdentifier('true'),
         Token(TType.LEFT_BRACE),
-        Token(TType.RETURN),
-        Token(TType.FALSE),
+        Token.fromIdentifier('return'),
+        Token.fromIdentifier('false'),
         Token(TType.SEMICOLON),
         Token(TType.RIGHT_BRACE),
-        Token(TType.ELSE),
+        Token.fromIdentifier('else'),
         Token(TType.LEFT_BRACE),
-        Token(TType.RETURN),
-        Token(TType.TRUE),
+        Token.fromIdentifier('return'),
+        Token.fromIdentifier('true'),
         Token(TType.SEMICOLON),
         Token(TType.RIGHT_BRACE)
       ];
       var lexer = Lexer(input);
       for (var current in result) {
         var t = lexer.nextToken();
-        expect(t, equals(current));
+        expect(current,equals(t));
       }
     });
     test('Test for double character operators',(){
@@ -56,23 +55,23 @@ void main() {
       }
       ''';
       var result = [
-        Token(TType.IF),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('if'),
+        Token.fromIdentifier('data'),
         Token(TType.DOUBLE_EQUAL),
-        Token(TType.NUMBER),
+        Token(TType.NUMBER,content: '10'),
         Token(TType.LEFT_BRACE),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('data'),
         Token(TType.EQUAL),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('data'),
         Token(TType.NOT_EQUAL),
-        Token(TType.NUMBER),
+        Token(TType.NUMBER,content: '20'),
         Token(TType.SEMICOLON),
         Token(TType.RIGHT_BRACE),
       ];
       var lexer = Lexer(input);
       for (var current in result) {
         var t = lexer.nextToken();
-        expect(t, equals(current));
+        expect(current,equals(t));
       }
     });
     test('Test for single character operator', () {
@@ -84,36 +83,36 @@ void main() {
       ''';
       // TODO: Add the correct test result
       var result = [
-        Token(TType.VAR),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('var'),
+        Token.fromIdentifier('input'),
         Token(TType.EQUAL),
-        Token(TType.NUMBER),
+        Token(TType.NUMBER,content: '205'),
         Token(TType.SEMICOLON),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('input'),
         Token(TType.EQUAL),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('input'),
         Token(TType.DIV),
-        Token(TType.NUMBER),
+        Token(TType.NUMBER,content: '10'),
         Token(TType.SEMICOLON),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('go'),
         Token(TType.LEFT_PAREN),
-        Token(TType.NUMBER),
+        Token(TType.NUMBER,content: '5'),
         Token(TType.BIGGER),
-        Token(TType.NUMBER),
+        Token(TType.NUMBER,content: '10'),
         Token(TType.COMMA),
-        Token(TType.NUMBER),
+        Token(TType.NUMBER,content: '50'),
         Token(TType.MUL),
-        Token(TType.NUMBER),
+        Token(TType.NUMBER,content: '2'),
         Token(TType.RIGHT_PAREN),
         Token(TType.SEMICOLON),
         Token(TType.NOT),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('input'),
         Token(TType.SEMICOLON),
       ];
       var lexer = Lexer(input);
       for (var current in result) {
         var t = lexer.nextToken();
-        expect(t, equals(current));
+        expect(current,equals(t));
       }
     });
     test('Test for basic program', () {
@@ -127,41 +126,40 @@ void main() {
       ''';
       // Added the result and test
       var result = [
-        Token(TType.VAR),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('var'),
+        Token.fromIdentifier('number'),
         Token(TType.EQUAL),
-        Token(TType.NUMBER),
+        Token(TType.NUMBER,content: '5'),
         Token(TType.SEMICOLON),
-        Token(TType.VAR),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('var'),
+        Token.fromIdentifier('add'),
         Token(TType.EQUAL),
-        Token(TType.METHOD),
+        Token.fromIdentifier('f'),
         Token(TType.LEFT_PAREN),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('x'),
         Token(TType.COMMA),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('y'),
         Token(TType.RIGHT_PAREN),
         Token(TType.LEFT_BRACE),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('x'),
         Token(TType.ADD),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('y'),
         Token(TType.SEMICOLON),
         Token(TType.RIGHT_BRACE),
-        Token(TType.VAR),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('var'),
+        Token.fromIdentifier('result'),
         Token(TType.EQUAL),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('add'),
         Token(TType.LEFT_PAREN),
-        Token(TType.IDENTIFIER),
+        Token.fromIdentifier('number'),
         Token(TType.COMMA),
-        Token(TType.NUMBER),
+        Token(TType.NUMBER,content: '5'),
         Token(TType.RIGHT_PAREN)
       ];
       var lexer = Lexer(input);
       for (var current in result) {
         var t = lexer.nextToken();
-        expect(t, equals(current));
+        expect(current,equals(t));
       }
     });
-  });
 }

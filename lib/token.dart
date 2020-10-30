@@ -78,7 +78,8 @@ class Token {
 
   @override
   bool operator ==(Object other) {
-    return other is Token && other.tokenType == tokenType;
+    return other is Token
+        && other.tokenType == tokenType && other.content == content;
   }
 
   @override

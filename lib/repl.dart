@@ -7,7 +7,7 @@ class Repl{
   static void start(){
     var run = true;
     while(run){
-      print('Type your command ~');
+      stdout.write('~ ');
       var input = stdin.readLineSync();
       // Check for REPL specific keyword
       if (input == '.exit'){
