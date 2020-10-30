@@ -50,7 +50,7 @@ void main() {
         expect(t, equals(current));
       }
     });
-    test('Test for double character opeartor',(){
+    test('Test for double character operators',(){
       var input = '''if data == 10{
         data = data != 20;
       }

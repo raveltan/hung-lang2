@@ -1,7 +1,8 @@
 name: hung_lang2
-description: A sample command-line application.
-# version: 1.0.0
-# homepage: https://www.example.com
+description: An interpreter by Ravel Tanjaya written in pure Dart.
+version: 0.0.1
+authors:
+  - Ravel Tanjaya
 
 environment:
   sdk: '>=2.9.3 <3.0.0'

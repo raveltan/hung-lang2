@@ -1,20 +1,11 @@
+import 'dart:io' show Platform;
 
-
-import 'package:hung_lang2/lexer.dart';
-import 'package:hung_lang2/token.dart';
+import 'package:hung_lang2/repl.dart';
 
 void main(List<String> arguments) {
-  var l = Lexer('''var number = 5;
-      
-      var add = f(x,y){
-      x + y;
-      }
-      
-      var result = add(number,5);''');
-  var d = l.nextToken();
-  print(d);
-  while(d!=Token(TType.EOF)){
-    d = l.nextToken();
-    print(d);
-  }
+  var showToken = arguments.contains('--token');
+  var dartVersion = Platform.version;
+  print('Hung Lang 2 (v0.0.1)');
+  print('Based on Dart $dartVersion');
+  Repl.start();
 }
