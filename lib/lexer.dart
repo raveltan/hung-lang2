@@ -48,7 +48,9 @@ class Lexer {
         }
       case '-':
         {
-          result = Token(TType.SUB);
+          // Need to set content - See parser.dart/_parsePrefixExpression()
+          // See ast.dart/PrefixExpression
+          result = Token(TType.SUB,content: '-');
           break;
         }
       case '!':
@@ -58,7 +60,9 @@ class Lexer {
             _readNextCharacter();
             result = Token(TType.NOT_EQUAL);
           }else{
-            result = Token(TType.NOT);
+            // Need to set content - See parser.dart/_parsePrefixExpression()
+            // See ast.dart/PrefixExpression
+            result = Token(TType.NOT,content: '!');
           }
           break;
         }

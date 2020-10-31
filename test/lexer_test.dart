@@ -105,7 +105,7 @@ void main() {
         Token(TType.NUMBER,content: '2'),
         Token(TType.RIGHT_PAREN),
         Token(TType.SEMICOLON),
-        Token(TType.NOT),
+        Token(TType.NOT,content: '!'),
         Token.fromIdentifier('input'),
         Token(TType.SEMICOLON),
       ];
