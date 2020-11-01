@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 
+import 'package:hung_lang2/parser.dart';
 import 'package:hung_lang2/repl.dart';
 
 void main(List<String> arguments) {
