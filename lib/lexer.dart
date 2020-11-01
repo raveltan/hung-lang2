@@ -35,15 +35,15 @@ class Lexer {
           // Add condition for double operator
           if (_seeNextChar() == '=') {
             _readNextCharacter();
-            result = Token(TType.DOUBLE_EQUAL);
+            result = Token(TType.DOUBLE_EQUAL,content: '==');
           } else {
-            result = Token(TType.EQUAL);
+            result = Token(TType.EQUAL,content: '=');
           }
           break;
         }
       case '+':
         {
-          result = Token(TType.ADD);
+          result = Token(TType.ADD,content: '+');
           break;
         }
       case '-':
@@ -58,7 +58,7 @@ class Lexer {
           // Add new condition for double operator
           if (_seeNextChar() == '='){
             _readNextCharacter();
-            result = Token(TType.NOT_EQUAL);
+            result = Token(TType.NOT_EQUAL,content: '!=');
           }else{
             // Need to set content - See parser.dart/_parsePrefixExpression()
             // See ast.dart/PrefixExpression
@@ -68,52 +68,52 @@ class Lexer {
         }
       case '*':
         {
-          result = Token(TType.MUL);
+          result = Token(TType.MUL,content: '*');
           break;
         }
       case '/':
         {
-          result = Token(TType.DIV);
+          result = Token(TType.DIV,content: '/');
           break;
         }
       case '<':
         {
-          result = Token(TType.LESSER);
+          result = Token(TType.LESSER,content: '<');
           break;
         }
       case '>':
         {
-          result = Token(TType.BIGGER);
+          result = Token(TType.BIGGER,content: '>');
           break;
         }
       case ',':
         {
-          result = Token(TType.COMMA);
+          result = Token(TType.COMMA,content: ',');
           break;
         }
       case ';':
         {
-          result = Token(TType.SEMICOLON);
+          result = Token(TType.SEMICOLON,content: ';');
           break;
         }
       case '(':
         {
-          result = Token(TType.LEFT_PAREN);
+          result = Token(TType.LEFT_PAREN,content: '(');
           break;
         }
       case ')':
         {
-          result = Token(TType.RIGHT_PAREN);
+          result = Token(TType.RIGHT_PAREN,content: ')');
           break;
         }
       case '{':
         {
-          result = Token(TType.LEFT_BRACE);
+          result = Token(TType.LEFT_BRACE,content: '{');
           break;
         }
       case '}':
         {
-          result = Token(TType.RIGHT_BRACE);
+          result = Token(TType.RIGHT_BRACE,content: '}');
           break;
         }
       case '':

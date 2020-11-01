@@ -8,7 +8,7 @@ let <expression> = <expression>;
 return <expression>;
 
 <prefix operator | !- > <expression>;
-<expression> <infix operator | + - * / > < == > <expression>;
+<expression> <<infix operator | + - * / > < == >> <expression>;
  */
 
 import 'package:hung_lang2/ast.dart';
@@ -16,21 +16,24 @@ import 'package:hung_lang2/lexer.dart';
 import 'package:hung_lang2/token.dart';
 
 // OrderOfOperation
-enum OpOrder {
-  LOWEST,
-  DOUBLE_EQUAL,
-  GREATER_LESS,
-  ADD,
-  MUL,
-  PREFIX,
-  CALL
-}
+enum OpOrder { LOWEST, DOUBLE_EQUAL, GREATER_LESS, ADD, MUL, PREFIX, CALL }
 
-extension ParseToInt on OpOrder{
-  int getPrecedence(){
+extension ParseToInt on OpOrder {
+  int getPrecedence() {
     return index;
   }
 }
+
+const Map<TType, OpOrder> precedences = {
+  TType.DOUBLE_EQUAL: OpOrder.DOUBLE_EQUAL,
+  TType.NOT_EQUAL: OpOrder.DOUBLE_EQUAL,
+  TType.LESSER: OpOrder.GREATER_LESS,
+  TType.BIGGER: OpOrder.GREATER_LESS,
+  TType.ADD: OpOrder.ADD,
+  TType.SUB: OpOrder.ADD,
+  TType.DIV: OpOrder.MUL,
+  TType.MUL: OpOrder.MUL,
+};
 
 class Parser {
   Lexer _lexer;
@@ -47,24 +50,58 @@ class Parser {
     _nextToken();
     // Setup the parsing function for different prefix expressions.
     _parsePrefixFunctions = {
-      TType.IDENTIFIER : () => Expression(Token.fromIdentifier(_currentToken.content)),
-      TType.NUMBER : ()  {
+      TType.IDENTIFIER: () =>
+          Expression(Token.fromIdentifier(_currentToken.content)),
+      TType.NUMBER: () {
         var number = 0;
-        try{
+        try {
           number = int.tryParse(_currentToken.content);
-        }catch(_){
+        } catch (_) {
           errors.add('Cannot parse string to int');
           return null;
         }
-        return IntegerLiteral(Token.fromIdentifier('0'),number);
+        return IntegerLiteral(_currentToken, number);
       },
-      TType.NOT : _parsePrefixExpression,
-      TType.SUB : _parsePrefixExpression,
+      TType.NOT: _parsePrefixExpression,
+      TType.SUB: _parsePrefixExpression,
     };
-    _parseInfixFunctions = {};
+    _parseInfixFunctions = {
+      TType.BIGGER:_parseInfixExpression,
+      TType.LESSER:_parseInfixExpression,
+      TType.NOT_EQUAL:_parseInfixExpression,
+      TType.DOUBLE_EQUAL:_parseInfixExpression,
+      TType.MUL:_parseInfixExpression,
+      TType.DIV:_parseInfixExpression,
+      TType.SUB:_parseInfixExpression,
+      TType.ADD:_parseInfixExpression,
+    };
   }
 
-  Expression _parsePrefixExpression(){
+  Expression _parseInfixExpression(Expression leftExpression){
+    var expression = InfixExpression(_currentToken, _currentToken.content, leftExpression);
+    var currentPrecedence = _currentPrecedence();
+    _nextToken();
+    expression.right = _parseExpression(currentPrecedence);
+
+    return expression;
+  }
+
+  int _peekPrecedence(){
+    if(precedences.containsKey(_peekNextToken.tokenType)){
+      return precedences[_peekNextToken.tokenType].getPrecedence();
+    }
+    return OpOrder.LOWEST.getPrecedence();
+  }
+
+  int _currentPrecedence(){
+    if(precedences.containsKey(_currentToken.tokenType)){
+      return precedences[_currentToken.tokenType].getPrecedence();
+    }
+    return OpOrder.LOWEST.getPrecedence();
+  }
+
+
+  Expression _parsePrefixExpression() {
     var ex = PrefixExpression(_currentToken, _currentToken.content);
     _nextToken();
     ex.data = _parseExpression(OpOrder.PREFIX.getPrecedence());
@@ -154,12 +191,23 @@ class Parser {
     return statement;
   }
 
-  Expression _parseExpression(int precedence){
-    if(!_parsePrefixFunctions.containsKey(_currentToken.tokenType)){
-      errors.add('no prefix parse function found for ${_currentToken.tokenType}');
+  Expression _parseExpression(int precedence) {
+    if (!_parsePrefixFunctions.containsKey(_currentToken.tokenType)) {
+      errors
+          .add('no prefix parse function found for ${_currentToken.tokenType}');
       return null;
     }
-    return _parsePrefixFunctions[_currentToken.tokenType]();
+    var leftExpression =  _parsePrefixFunctions[_currentToken.tokenType]();
+
+    while(!(_peekNextToken.tokenType == TType.SEMICOLON) && precedence < _peekPrecedence()){
+        if(!_parseInfixFunctions.containsKey(_peekNextToken.tokenType)){
+          return leftExpression;
+        }
+        var prefixClosure = _parseInfixFunctions[_peekNextToken.tokenType];
+        _nextToken();
+        leftExpression = prefixClosure(leftExpression);
+    }
+    return leftExpression;
   }
 
   // Return true and advance to next token if next token is of expected type

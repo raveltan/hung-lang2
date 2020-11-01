@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:hung_lang2/lexer.dart';
+import 'package:hung_lang2/parser.dart';
 import 'package:hung_lang2/token.dart';
 
 class Repl{
@@ -13,13 +14,9 @@ class Repl{
       if (input == '.exit'){
         return;
       }
-      var lex = Lexer(input);
-      // TODO: remove or conditionally display.
-      var currentToken = lex.nextToken();
-      while(currentToken != Token(TType.EOF)){
-        print(currentToken);
-        currentToken = lex.nextToken();
-      }
+      var p = Parser(input);
+      var result = p.parseProgram();
+      print(p.errors.isEmpty ? result : p.errors);
     }
   }
 }

@@ -22,18 +22,10 @@ class Node {
 
 class Statement extends Node {
   Statement(Token token) : super(token);
-
-  String statementNode() {
-    return '';
-  }
 }
 
 class Expression extends Node {
   Expression(Token token) : super(token);
-
-  String expressionNode() {
-    return '';
-  }
 }
 
 /*
@@ -50,7 +42,7 @@ class VarStatement extends Statement {
 
   @override
   String toString() {
-    return '${token.tokenType.toString()} ${name.token.content} = ${value.token.content};';
+    return 'var ${name.token.content} = ${value.token.content};';
   }
 }
 
@@ -60,19 +52,19 @@ class ReturnStatement extends Statement {
 
   @override
   String toString() {
-    return '${token.tokenType.toString()} ${returnValue.token.content};';
+    return '<return ${returnValue.token.content}>;';
   }
 }
 
 // Class for Expression statement
-// 5 + 10; -> Legal in hung lang 2
+// 5 + 10;
 class ExpressionStatement extends Statement {
   ExpressionStatement(Token token) : super(token);
   Expression expression;
 
   @override
   String toString() {
-    return '${token.toString()} ${expression.toString() ?? ''}';
+    return '${expression.toString()}';
   }
 }
 
@@ -99,6 +91,21 @@ class PrefixExpression extends Expression {
   @override
   String toString() {
     return '<$operator $data>';
+  }
+}
+
+class InfixExpression extends Expression {
+  InfixExpression(Token token, String operator, Expression left)
+      : operator = operator,
+        left = left,
+        super(token);
+  final String operator;
+  final Expression left;
+  Expression right;
+
+  @override
+  String toString() {
+    return '<$left $operator $right>';
   }
 }
 

@@ -122,17 +122,30 @@ void main() {
 
       var p = Parser(input);
       var program = p.parseProgram();
-      expect(p.errors.length, 0, reason: 'There should not be any error:\n${p.errors}');
+      expect(p.errors.length, 0,
+          reason: 'There should not be any error:\n${p.errors}');
       expect(program.statements.length, 1,
           reason: 'Length of the program should be 1');
       expect(program.statements[0] is ExpressionStatement, true,
           reason: 'Statement should be ExpressionStatement');
-      expect((program.statements[0] as ExpressionStatement).expression is PrefixExpression,true,
-      reason: 'Statement.expression should be prefixExpression');
-      expect(((program.statements[0] as ExpressionStatement).expression as PrefixExpression).operator,
-      op,reason: 'Operator should be $op');
-      expect((((program.statements[0] as ExpressionStatement).expression as PrefixExpression).data as IntegerLiteral).value,
-      val,reason: 'The number is not $val');
+      expect(
+          (program.statements[0] as ExpressionStatement).expression
+              is PrefixExpression,
+          true,
+          reason: 'Statement.expression should be prefixExpression');
+      expect(
+          ((program.statements[0] as ExpressionStatement).expression
+                  as PrefixExpression)
+              .operator,
+          op,
+          reason: 'Operator should be $op');
+      expect(
+          (((program.statements[0] as ExpressionStatement).expression
+                      as PrefixExpression)
+                  .data as IntegerLiteral)
+              .value,
+          val,
+          reason: 'The number is not $val');
     });
     test('Test for prefix expression (-)', () {
       var input = '-3;';
@@ -141,17 +154,65 @@ void main() {
 
       var p = Parser(input);
       var program = p.parseProgram();
-      expect(p.errors.length, 0, reason: 'There should not be any error:\n${p.errors}');
+      expect(p.errors.length, 0,
+          reason: 'There should not be any error:\n${p.errors}');
       expect(program.statements.length, 1,
           reason: 'Length of the program should be 1');
       expect(program.statements[0] is ExpressionStatement, true,
           reason: 'Statement should be ExpressionStatement');
-      expect((program.statements[0] as ExpressionStatement).expression is PrefixExpression,true,
+      expect(
+          (program.statements[0] as ExpressionStatement).expression
+              is PrefixExpression,
+          true,
           reason: 'Statement.expression should be prefixExpression');
-      expect(((program.statements[0] as ExpressionStatement).expression as PrefixExpression).operator,
-          op,reason: 'Operator should be $op');
-      expect((((program.statements[0] as ExpressionStatement).expression as PrefixExpression).data as IntegerLiteral).value,
-          val,reason: 'The number is not $val');
+      expect(
+          ((program.statements[0] as ExpressionStatement).expression
+                  as PrefixExpression)
+              .operator,
+          op,
+          reason: 'Operator should be $op');
+      expect(
+          (((program.statements[0] as ExpressionStatement).expression
+                      as PrefixExpression)
+                  .data as IntegerLiteral)
+              .value,
+          val,
+          reason: 'The number is not $val');
+    });
+    test('Test for infix expressions', () {
+      var input = [
+        '1 + 1;',
+        '1!= 3;',
+        '1==3;',
+        '5-3;',
+        '5<9;',
+        '3*4;',
+        '3/3;',
+        '4>9;'
+      ];
+      var left = [1, 1, 1, 5, 5, 3, 3, 4];
+      var right = [1, 3, 3, 3, 9, 4, 3, 9];
+      var operator = ['+', '!=', '==', '-', '<', '*', '/', '>'];
+
+      for (var i = 0; i < input.length; i++) {
+        var p = Parser(input[i]);
+        var program = p.parseProgram();
+        expect(p.errors.length, 0, reason: 'Parser has error(s):\n${p.errors}');
+        expect(program.statements.length, 1,
+            reason: 'Program should have 1 statement');
+        expect(program.statements[0] is ExpressionStatement, true,
+            reason: 'Statement should be expressionStatement');
+        var exStatement = (program.statements[0] as ExpressionStatement).expression;
+        expect(exStatement is InfixExpression, true,
+            reason: 'Statement should be InfixExpression');
+        var inStatement = exStatement as InfixExpression;
+        expect((inStatement.left as IntegerLiteral).value, left[i],
+            reason: 'Left data should be ${left[i]}');
+        expect((inStatement.right as IntegerLiteral).value, right[i],
+            reason: 'Left data should be ${right[i]}');
+        expect(inStatement.operator, operator[i],
+            reason: 'Operator should be ${operator[i]}');
+      }
     });
   });
 }

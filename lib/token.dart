@@ -84,6 +84,6 @@ class Token {
 
   @override
   String toString() {
-    return '($tokenType,$content)';
+    return '[$tokenType,$content]';
   }
 }
