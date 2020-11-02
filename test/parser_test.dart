@@ -68,7 +68,7 @@ void main() {
       varStatement.name = Expression(Token.fromIdentifier('data'));
       varStatement.value = Expression(Token.fromIdentifier('data2'));
       program.statements.add(varStatement);
-      expect(program.toString(), 'TType.VAR data = data2;',
+      expect(program.toString(), '{var data = data2;}',
           reason: 'VarStatement toString method is faulty');
     });
     test('Test for toString method of RETURN', () {
@@ -76,7 +76,7 @@ void main() {
       var returnStatement = ReturnStatement();
       returnStatement.returnValue = Expression(Token.fromIdentifier('xy'));
       program.statements.add(returnStatement);
-      expect(program.toString(), 'TType.RETURN xy;',
+      expect(program.toString(), '{return xy;}',
           reason: 'ReturnStatement toString method is faulty');
     });
   });
@@ -202,7 +202,8 @@ void main() {
             reason: 'Program should have 1 statement');
         expect(program.statements[0] is ExpressionStatement, true,
             reason: 'Statement should be expressionStatement');
-        var exStatement = (program.statements[0] as ExpressionStatement).expression;
+        var exStatement =
+            (program.statements[0] as ExpressionStatement).expression;
         expect(exStatement is InfixExpression, true,
             reason: 'Statement should be InfixExpression');
         var inStatement = exStatement as InfixExpression;
@@ -212,6 +213,45 @@ void main() {
             reason: 'Left data should be ${right[i]}');
         expect(inStatement.operator, operator[i],
             reason: 'Operator should be ${operator[i]}');
+      }
+    });
+    test('Test for boolean literal', () {
+      var input = 'true == false';
+      var operator = '==';
+      var left = true;
+      var right = false;
+      var p = Parser(input);
+      var program = p.parseProgram();
+      expect(p.errors.length, 0, reason: 'Parser has error(s):\n${p.errors}');
+      expect(program.statements.length, 1,
+          reason: 'Program should have 1 statement');
+      expect(program.statements[0] is ExpressionStatement, true,
+          reason: 'Expression should be expression statement');
+      var exStatement = program.statements[0] as ExpressionStatement;
+      expect(exStatement.expression is InfixExpression, true,
+          reason: 'Expression statement should be infix expression');
+      var inStatement = exStatement.expression as InfixExpression;
+      expect(inStatement.left is BooleanLiteral, true,
+          reason: 'Left data should be boolean');
+      var leftData = inStatement.left as BooleanLiteral;
+      expect(inStatement.operator, operator,
+          reason: 'Operator should be $operator');
+      expect(inStatement.right is BooleanLiteral, true,
+          reason: 'Right data should be boolean literal');
+      var rightData = inStatement.right as BooleanLiteral;
+      expect(leftData.data, left, reason: 'Left data should be $left');
+      expect(rightData.data, right, reason: 'right data should be $right');
+    });
+    test('Test for grouped expression', () {
+      var input = ['1+(2+3)'];
+      var result = ['{{1 + {2 + 3}}}'];
+      for (var i = 0; i < input.length; i++) {
+        var p = Parser(input[i]);
+        var program = p.parseProgram();
+        expect(p.errors.length, 0, reason: 'Parser has error(s):\n${p.errors}');
+        expect(program.statements.length, 1,
+            reason: 'Program should have 1 statement');
+        expect(program.toString(), result[i], reason: 'AST is incorrect');
       }
     });
   });

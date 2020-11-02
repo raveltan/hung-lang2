@@ -42,7 +42,7 @@ class VarStatement extends Statement {
 
   @override
   String toString() {
-    return 'var ${name.token.content} = ${value.token.content};';
+    return '{var ${name.token.content} = ${value.token.content};}';
   }
 }
 
@@ -52,7 +52,7 @@ class ReturnStatement extends Statement {
 
   @override
   String toString() {
-    return '<return ${returnValue.token.content}>;';
+    return '{return ${returnValue.token.content};}';
   }
 }
 
@@ -64,7 +64,7 @@ class ExpressionStatement extends Statement {
 
   @override
   String toString() {
-    return '${expression.toString()}';
+    return '{${expression.toString()}}';
   }
 }
 
@@ -77,7 +77,16 @@ class IntegerLiteral extends Expression {
 
   @override
   String toString() {
-    return token.toString();
+    return value.toString();
+  }
+}
+
+class BooleanLiteral extends Expression{
+  BooleanLiteral(Token token) : super(token);
+  bool data;
+  @override
+  String toString() {
+    return data.toString();
   }
 }
 
@@ -90,7 +99,7 @@ class PrefixExpression extends Expression {
 
   @override
   String toString() {
-    return '<$operator $data>';
+    return '{$operator $data}';
   }
 }
 
@@ -105,7 +114,7 @@ class InfixExpression extends Expression {
 
   @override
   String toString() {
-    return '<$left $operator $right>';
+    return '{$left $operator $right}';
   }
 }
 

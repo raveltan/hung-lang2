@@ -9,6 +9,7 @@ return <expression>;
 
 <prefix operator | !- > <expression>;
 <expression> <<infix operator | + - * / > < == >> <expression>;
+if (<condition>) <result> else <alternative>;
  */
 
 import 'package:hung_lang2/ast.dart';
@@ -62,23 +63,38 @@ class Parser {
         }
         return IntegerLiteral(_currentToken, number);
       },
+      TType.LEFT_PAREN:(){
+        _nextToken();
+        var expression = _parseExpression(OpOrder.LOWEST.getPrecedence());
+        if (!_expectAndPeek(TType.RIGHT_PAREN)){
+          errors.add('Cannot find right parentheses');
+          return null;
+        }
+        return expression;
+      },
       TType.NOT: _parsePrefixExpression,
       TType.SUB: _parsePrefixExpression,
+      TType.TRUE: _parseBooleanLiteral,
+      TType.FALSE: _parseBooleanLiteral,
     };
     _parseInfixFunctions = {
-      TType.BIGGER:_parseInfixExpression,
-      TType.LESSER:_parseInfixExpression,
-      TType.NOT_EQUAL:_parseInfixExpression,
-      TType.DOUBLE_EQUAL:_parseInfixExpression,
-      TType.MUL:_parseInfixExpression,
-      TType.DIV:_parseInfixExpression,
-      TType.SUB:_parseInfixExpression,
-      TType.ADD:_parseInfixExpression,
+      TType.BIGGER: _parseInfixExpression,
+      TType.LESSER: _parseInfixExpression,
+      TType.NOT_EQUAL: _parseInfixExpression,
+      TType.DOUBLE_EQUAL: _parseInfixExpression,
+      TType.MUL: _parseInfixExpression,
+      TType.DIV: _parseInfixExpression,
+      TType.SUB: _parseInfixExpression,
+      TType.ADD: _parseInfixExpression,
     };
   }
 
-  Expression _parseInfixExpression(Expression leftExpression){
-    var expression = InfixExpression(_currentToken, _currentToken.content, leftExpression);
+  Expression _parseBooleanLiteral() => BooleanLiteral(_currentToken)
+    ..data = _currentToken.tokenType == TType.TRUE ? true : false;
+
+  Expression _parseInfixExpression(Expression leftExpression) {
+    var expression =
+        InfixExpression(_currentToken, _currentToken.content, leftExpression);
     var currentPrecedence = _currentPrecedence();
     _nextToken();
     expression.right = _parseExpression(currentPrecedence);
@@ -86,20 +102,19 @@ class Parser {
     return expression;
   }
 
-  int _peekPrecedence(){
-    if(precedences.containsKey(_peekNextToken.tokenType)){
+  int _peekPrecedence() {
+    if (precedences.containsKey(_peekNextToken.tokenType)) {
       return precedences[_peekNextToken.tokenType].getPrecedence();
     }
     return OpOrder.LOWEST.getPrecedence();
   }
 
-  int _currentPrecedence(){
-    if(precedences.containsKey(_currentToken.tokenType)){
+  int _currentPrecedence() {
+    if (precedences.containsKey(_currentToken.tokenType)) {
       return precedences[_currentToken.tokenType].getPrecedence();
     }
     return OpOrder.LOWEST.getPrecedence();
   }
-
 
   Expression _parsePrefixExpression() {
     var ex = PrefixExpression(_currentToken, _currentToken.content);
@@ -197,15 +212,16 @@ class Parser {
           .add('no prefix parse function found for ${_currentToken.tokenType}');
       return null;
     }
-    var leftExpression =  _parsePrefixFunctions[_currentToken.tokenType]();
+    var leftExpression = _parsePrefixFunctions[_currentToken.tokenType]();
 
-    while(!(_peekNextToken.tokenType == TType.SEMICOLON) && precedence < _peekPrecedence()){
-        if(!_parseInfixFunctions.containsKey(_peekNextToken.tokenType)){
-          return leftExpression;
-        }
-        var prefixClosure = _parseInfixFunctions[_peekNextToken.tokenType];
-        _nextToken();
-        leftExpression = prefixClosure(leftExpression);
+    while (!(_peekNextToken.tokenType == TType.SEMICOLON) &&
+        precedence < _peekPrecedence()) {
+      if (!_parseInfixFunctions.containsKey(_peekNextToken.tokenType)) {
+        return leftExpression;
+      }
+      var prefixClosure = _parseInfixFunctions[_peekNextToken.tokenType];
+      _nextToken();
+      leftExpression = prefixClosure(leftExpression);
     }
     return leftExpression;
   }
