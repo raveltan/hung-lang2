@@ -68,6 +68,30 @@ class ExpressionStatement extends Statement {
   }
 }
 
+class IfExpression extends Expression {
+  IfExpression(Token token) : super(token);
+  Expression condition;
+  MultilineStatement result;
+  MultilineStatement alternative;
+
+  @override
+  String toString() {
+    return 'if $condition $result ${alternative != null ? "else $alternative" : ""}';
+  }
+}
+
+class MultilineStatement extends Statement {
+  MultilineStatement(Token token) : super(token);
+  List<Statement> statements;
+
+  @override
+  String toString() {
+    return statements.join('\n');
+  }
+}
+
+
+
 // Integer Literals
 class IntegerLiteral extends Expression {
   IntegerLiteral(Token token, int value)
@@ -81,9 +105,10 @@ class IntegerLiteral extends Expression {
   }
 }
 
-class BooleanLiteral extends Expression{
+class BooleanLiteral extends Expression {
   BooleanLiteral(Token token) : super(token);
   bool data;
+
   @override
   String toString() {
     return data.toString();

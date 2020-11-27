@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:hung_lang2/ast.dart';
 import 'package:hung_lang2/parser.dart';
 import 'package:hung_lang2/token.dart';
@@ -253,6 +255,53 @@ void main() {
             reason: 'Program should have 1 statement');
         expect(program.toString(), result[i], reason: 'AST is incorrect');
       }
+    });
+    test('Test for if expression', () {
+      var input = 'if (a <b) {c}';
+      var p = Parser(input);
+      var program = p.parseProgram();
+      expect(p.errors.length, 0, reason: 'Parser has error(s):\n${p.errors}');
+      expect(program.statements.length, 1,
+          reason: 'Statement length should be 1');
+      expect(program.statements[0] is ExpressionStatement, true,
+          reason: 'Statement should be expression statement');
+      var expression =
+          (program.statements[0] as ExpressionStatement).expression;
+      expect(expression is IfExpression, true,
+          reason: 'Statement is not if expression');
+      var ifExpression = expression as IfExpression;
+      expect(ifExpression.result.statements.length == 1, true,
+          reason: 'Result statement length should be 1');
+      expect(ifExpression.result.statements[0] is ExpressionStatement, true,
+          reason: 'Result should be expression statement');
+      expect(ifExpression.alternative == null, true,
+          reason: 'Alternative statement should be null');
+    });
+    test('Test for if else expression', () {
+      var input = 'if (a <b) {c} else {d}';
+      var p = Parser(input);
+      var program = p.parseProgram();
+      expect(p.errors.length, 0, reason: 'Parser has error(s):\n${p.errors}');
+      expect(program.statements.length, 1,
+          reason: 'Statement length should be 1');
+      expect(program.statements[0] is ExpressionStatement, true,
+          reason: 'Statement should be expression statement');
+      var expression =
+          (program.statements[0] as ExpressionStatement).expression;
+      expect(expression is IfExpression, true,
+          reason: 'Statement is not if expression');
+      var ifExpression = expression as IfExpression;
+      expect(ifExpression.result.statements.length == 1, true,
+          reason: 'Result statement length should be 1');
+      expect(ifExpression.result.statements[0] is ExpressionStatement, true,
+          reason: 'Result should be expression statement');
+      expect(ifExpression.alternative == null, false,
+          reason: 'Alternative statement should not be null');
+      expect(ifExpression.alternative.statements.length == 1, true,
+          reason: 'Alternative statement length should be 1');
+      expect(
+          ifExpression.alternative.statements[0] is ExpressionStatement, true,
+          reason: 'Alternative should be expression statement');
     });
   });
 }

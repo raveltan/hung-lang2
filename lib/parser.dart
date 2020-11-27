@@ -51,6 +51,34 @@ class Parser {
     _nextToken();
     // Setup the parsing function for different prefix expressions.
     _parsePrefixFunctions = {
+      TType.IF: () {
+        var expression = IfExpression(_currentToken);
+        if (!_expectAndPeek(TType.LEFT_PAREN)){
+          errors.add("Cannot find left parentheses");
+          return null;
+        }
+        _nextToken();
+        expression.condition = _parseExpression(OpOrder.LOWEST.getPrecedence());
+        if(!_expectAndPeek(TType.RIGHT_PAREN)){
+          errors.add("Cannot find right parentheses");
+          return null;
+        }
+        if(!_expectAndPeek(TType.LEFT_BRACE)){
+          errors.add("Cannot find left brace (multiline statement opening)");
+          return null;
+        }
+        expression.result = _parseMultilineStatement();
+
+        if(_peekNextToken.tokenType == TType.ELSE){
+          _nextToken();
+          if(!_expectAndPeek(TType.LEFT_BRACE)){
+            errors.add('Cannot find left brace(multiline statement opening)');
+            return null;
+          }
+          expression.alternative = _parseMultilineStatement();
+        }
+        return expression;
+      },
       TType.IDENTIFIER: () =>
           Expression(Token.fromIdentifier(_currentToken.content)),
       TType.NUMBER: () {
@@ -114,6 +142,23 @@ class Parser {
       return precedences[_currentToken.tokenType].getPrecedence();
     }
     return OpOrder.LOWEST.getPrecedence();
+  }
+
+  MultilineStatement _parseMultilineStatement(){
+    var st = MultilineStatement(_currentToken);
+    st.statements = [];
+
+    _nextToken();
+
+    while (_currentToken.tokenType != TType.RIGHT_BRACE){
+      var st2 = _parseStatement();
+      if (st2 !=null){
+        st.statements.add(st2);
+      }
+      _nextToken();
+    }
+
+    return st;
   }
 
   Expression _parsePrefixExpression() {
