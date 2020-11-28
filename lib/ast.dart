@@ -68,6 +68,16 @@ class ExpressionStatement extends Statement {
   }
 }
 
+class FunctionLiteral extends Expression{
+  FunctionLiteral(Token token) : super(token);
+  List<Expression> params;
+  MultilineStatement body;
+  @override
+  String toString() {
+    return 'f $params {$body}';
+  }
+}
+
 class IfExpression extends Expression {
   IfExpression(Token token) : super(token);
   Expression condition;

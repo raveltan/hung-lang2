@@ -10,6 +10,7 @@ return <expression>;
 <prefix operator | !- > <expression>;
 <expression> <<infix operator | + - * / > < == >> <expression>;
 if (<condition>) <result> else <alternative>;
+f (<params>) {<multistatement>}
  */
 
 import 'package:hung_lang2/ast.dart';
@@ -51,6 +52,23 @@ class Parser {
     _nextToken();
     // Setup the parsing function for different prefix expressions.
     _parsePrefixFunctions = {
+      TType.METHOD:(){
+        var funcLiteral = FunctionLiteral(_currentToken);
+
+        if(!_expectAndPeek(TType.LEFT_PAREN)){
+          errors.add('Unable to find left parentheses');
+          return null;
+        }
+        funcLiteral.params = _parseFunctionParams();
+
+        if(!_expectAndPeek(TType.LEFT_BRACE)){
+          errors.add('Unable to find left braces');
+          return null;
+        }
+
+        funcLiteral.body = _parseMultilineStatement();
+        return funcLiteral;
+      },
       TType.IF: () {
         var expression = IfExpression(_currentToken);
         if (!_expectAndPeek(TType.LEFT_PAREN)){
@@ -159,6 +177,29 @@ class Parser {
     }
 
     return st;
+  }
+  List<Expression> _parseFunctionParams(){
+    List<Expression> params = [];
+
+    if(_peekNextToken.tokenType == TType.RIGHT_PAREN){
+      _nextToken();
+      return params;
+    }
+
+    _nextToken();
+
+    params.add(Expression(_currentToken));
+
+    while(_peekNextToken.tokenType == TType.COMMA){
+      _nextToken();
+      _nextToken();
+      params.add(Expression(_currentToken));
+    }
+    if(!_expectAndPeek(TType.RIGHT_PAREN)){
+      errors.add('Cannot find right parentheses');
+      return null;
+    }
+    return params;
   }
 
   Expression _parsePrefixExpression() {
