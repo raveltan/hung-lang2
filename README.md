@@ -37,5 +37,6 @@ var abc = if(10>5) {20} else {16}
 In hung lang 2, function is always anonymous thus, can be used like a normal expression.
 
 ```javascript
-var a = f(a,b){20}
+var a = f(a,b){20*a+b}
+f(a){a*20}(20)
 ```

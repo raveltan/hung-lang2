@@ -301,19 +301,39 @@ void main() {
           ifExpression.alternative.statements[0] is ExpressionStatement, true,
           reason: 'Alternative should be expression statement');
     });
-    test('Test for Function literal',(){
+    test('Test for Function literal', () {
       var input = 'f(a,b) { a*b};';
       var p = Parser(input);
       var program = p.parseProgram();
-      expect(p.errors.length,0,reason: 'Parser has error(s):\n${p.errors}');
-      expect(program.statements.length,1,reason: 'Program should have 1 statement');
-      expect(program.statements[0] is ExpressionStatement,true,reason: 'Program statement should be expression statement');
+      expect(p.errors.length, 0, reason: 'Parser has error(s):\n${p.errors}');
+      expect(program.statements.length, 1,
+          reason: 'Program should have 1 statement');
+      expect(program.statements[0] is ExpressionStatement, true,
+          reason: 'Program statement should be expression statement');
       var exStatement = program.statements[0] as ExpressionStatement;
-      expect(exStatement.expression is FunctionLiteral,true,reason: 'Expression should be function literal');
+      expect(exStatement.expression is FunctionLiteral, true,
+          reason: 'Expression should be function literal');
       var funcLiteral = exStatement.expression as FunctionLiteral;
-      expect(funcLiteral.params.length,2,reason: 'There should be 2 params');
-      expect(funcLiteral.body.statements.length, 1,reason: 'There should be 1 statement in body');
-      expect(funcLiteral.body.statements[0] is ExpressionStatement,true,reason: 'Function body should be expression statement');
+      expect(funcLiteral.params.length, 2, reason: 'There should be 2 params');
+      expect(funcLiteral.body.statements.length, 1,
+          reason: 'There should be 1 statement in body');
+      expect(funcLiteral.body.statements[0] is ExpressionStatement, true,
+          reason: 'Function body should be expression statement');
+    });
+    test('Test for call expression', () {
+      var input = 'create(1,4*3,9+1)';
+      var p = Parser(input);
+      var program = p.parseProgram();
+      expect(p.errors.length, 0, reason: 'Parser has error(s):\n${p.errors}');
+      expect(program.statements.length, 1,
+          reason: 'Program should have 1 statement');
+      expect(program.statements[0] is ExpressionStatement, true,
+          reason: 'Program statement should be expression statement');
+      var exStatement = program.statements[0] as ExpressionStatement;
+      expect(exStatement.expression is CallExpression,true,reason: 'Expression should be call expression');
+      var callEx = exStatement.expression as CallExpression;
+      expect(callEx.funcName.token.content == 'create',true,reason: 'Function name should be create');
+      expect(callEx.args.length,3,reason: 'Args length should be 3');
     });
   });
 }

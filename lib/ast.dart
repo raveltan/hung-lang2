@@ -42,7 +42,7 @@ class VarStatement extends Statement {
 
   @override
   String toString() {
-    return '{var ${name.token.content} = ${value.token.content};}';
+    return '{var ${name.token.content} = $value;}';
   }
 }
 
@@ -68,10 +68,11 @@ class ExpressionStatement extends Statement {
   }
 }
 
-class FunctionLiteral extends Expression{
+class FunctionLiteral extends Expression {
   FunctionLiteral(Token token) : super(token);
   List<Expression> params;
   MultilineStatement body;
+
   @override
   String toString() {
     return 'f $params {$body}';
@@ -100,7 +101,16 @@ class MultilineStatement extends Statement {
   }
 }
 
+class CallExpression extends Expression {
+  CallExpression(Token token) : super(token);
+  Expression funcName;
+  List<Expression> args;
 
+  @override
+  String toString() {
+    return '$funcName($args)';
+  }
+}
 
 // Integer Literals
 class IntegerLiteral extends Expression {

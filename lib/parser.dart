@@ -35,6 +35,7 @@ const Map<TType, OpOrder> precedences = {
   TType.SUB: OpOrder.ADD,
   TType.DIV: OpOrder.MUL,
   TType.MUL: OpOrder.MUL,
+  TType.LEFT_PAREN: OpOrder.CALL,
 };
 
 class Parser {
@@ -52,16 +53,16 @@ class Parser {
     _nextToken();
     // Setup the parsing function for different prefix expressions.
     _parsePrefixFunctions = {
-      TType.METHOD:(){
+      TType.METHOD: () {
         var funcLiteral = FunctionLiteral(_currentToken);
 
-        if(!_expectAndPeek(TType.LEFT_PAREN)){
+        if (!_expectAndPeek(TType.LEFT_PAREN)) {
           errors.add('Unable to find left parentheses');
           return null;
         }
         funcLiteral.params = _parseFunctionParams();
 
-        if(!_expectAndPeek(TType.LEFT_BRACE)){
+        if (!_expectAndPeek(TType.LEFT_BRACE)) {
           errors.add('Unable to find left braces');
           return null;
         }
@@ -71,25 +72,25 @@ class Parser {
       },
       TType.IF: () {
         var expression = IfExpression(_currentToken);
-        if (!_expectAndPeek(TType.LEFT_PAREN)){
+        if (!_expectAndPeek(TType.LEFT_PAREN)) {
           errors.add("Cannot find left parentheses");
           return null;
         }
         _nextToken();
         expression.condition = _parseExpression(OpOrder.LOWEST.getPrecedence());
-        if(!_expectAndPeek(TType.RIGHT_PAREN)){
+        if (!_expectAndPeek(TType.RIGHT_PAREN)) {
           errors.add("Cannot find right parentheses");
           return null;
         }
-        if(!_expectAndPeek(TType.LEFT_BRACE)){
+        if (!_expectAndPeek(TType.LEFT_BRACE)) {
           errors.add("Cannot find left brace (multiline statement opening)");
           return null;
         }
         expression.result = _parseMultilineStatement();
 
-        if(_peekNextToken.tokenType == TType.ELSE){
+        if (_peekNextToken.tokenType == TType.ELSE) {
           _nextToken();
-          if(!_expectAndPeek(TType.LEFT_BRACE)){
+          if (!_expectAndPeek(TType.LEFT_BRACE)) {
             errors.add('Cannot find left brace(multiline statement opening)');
             return null;
           }
@@ -109,10 +110,10 @@ class Parser {
         }
         return IntegerLiteral(_currentToken, number);
       },
-      TType.LEFT_PAREN:(){
+      TType.LEFT_PAREN: () {
         _nextToken();
         var expression = _parseExpression(OpOrder.LOWEST.getPrecedence());
-        if (!_expectAndPeek(TType.RIGHT_PAREN)){
+        if (!_expectAndPeek(TType.RIGHT_PAREN)) {
           errors.add('Cannot find right parentheses');
           return null;
         }
@@ -132,6 +133,12 @@ class Parser {
       TType.DIV: _parseInfixExpression,
       TType.SUB: _parseInfixExpression,
       TType.ADD: _parseInfixExpression,
+      TType.LEFT_PAREN: (Expression func) {
+        var callEx = CallExpression(_currentToken);
+        callEx.funcName = func;
+        callEx.args = _parseCallArgs();
+        return callEx;
+      }
     };
   }
 
@@ -162,15 +169,38 @@ class Parser {
     return OpOrder.LOWEST.getPrecedence();
   }
 
-  MultilineStatement _parseMultilineStatement(){
+  List<Expression> _parseCallArgs() {
+    List<Expression> res = [];
+
+    if (_peekNextToken.tokenType == TType.RIGHT_PAREN) {
+      _nextToken();
+      return res;
+    }
+    _nextToken();
+    res.add(_parseExpression(OpOrder.LOWEST.getPrecedence()));
+
+    while (_peekNextToken.tokenType == TType.COMMA) {
+      _nextToken();
+      _nextToken();
+      res.add(_parseExpression(OpOrder.LOWEST.getPrecedence()));
+    }
+    if (!_expectAndPeek(TType.RIGHT_PAREN)) {
+      errors.add('Cannot find right parenthese');
+      return null;
+    }
+
+    return res;
+  }
+
+  MultilineStatement _parseMultilineStatement() {
     var st = MultilineStatement(_currentToken);
     st.statements = [];
 
     _nextToken();
 
-    while (_currentToken.tokenType != TType.RIGHT_BRACE){
+    while (_currentToken.tokenType != TType.RIGHT_BRACE) {
       var st2 = _parseStatement();
-      if (st2 !=null){
+      if (st2 != null) {
         st.statements.add(st2);
       }
       _nextToken();
@@ -178,10 +208,11 @@ class Parser {
 
     return st;
   }
-  List<Expression> _parseFunctionParams(){
+
+  List<Expression> _parseFunctionParams() {
     List<Expression> params = [];
 
-    if(_peekNextToken.tokenType == TType.RIGHT_PAREN){
+    if (_peekNextToken.tokenType == TType.RIGHT_PAREN) {
       _nextToken();
       return params;
     }
@@ -190,12 +221,12 @@ class Parser {
 
     params.add(Expression(_currentToken));
 
-    while(_peekNextToken.tokenType == TType.COMMA){
+    while (_peekNextToken.tokenType == TType.COMMA) {
       _nextToken();
       _nextToken();
       params.add(Expression(_currentToken));
     }
-    if(!_expectAndPeek(TType.RIGHT_PAREN)){
+    if (!_expectAndPeek(TType.RIGHT_PAREN)) {
       errors.add('Cannot find right parentheses');
       return null;
     }
@@ -257,28 +288,25 @@ class Parser {
   Statement _parseReturnStatement() {
     var statement = ReturnStatement();
     _nextToken();
-
-    // TODO: PROCESS EXPRESION
-    while (_currentToken.tokenType != TType.SEMICOLON) {
-      _nextToken();
-    }
+    statement.returnValue = _parseExpression(OpOrder.LOWEST.getPrecedence());
+    if (_peekNextToken.tokenType == TType.SEMICOLON) _nextToken();
     return statement;
   }
 
   Statement _parseVarStatement() {
     var statement = VarStatement();
     if (!_expectAndPeek(TType.IDENTIFIER)) {
+      errors.add('Unable to find identifier');
       return null;
     }
     statement.name = Expression(_currentToken);
     if (!_expectAndPeek(TType.EQUAL)) {
+      errors.add('Unable to find =');
       return null;
     }
-
-    // TODO: PROCESS EXPRESSION UNTIL SEMICOLON
-    while (_currentToken.tokenType != TType.SEMICOLON) {
-      _nextToken();
-    }
+    _nextToken();
+    statement.value = _parseExpression(OpOrder.LOWEST.getPrecedence());
+    if (_peekNextToken.tokenType == TType.SEMICOLON) _nextToken();
     return statement;
   }
 
