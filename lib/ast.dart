@@ -52,7 +52,7 @@ class ReturnStatement extends Statement {
 
   @override
   String toString() {
-    return '{return ${returnValue.token.content};}';
+    return '{return $returnValue;}';
   }
 }
 
@@ -64,7 +64,7 @@ class ExpressionStatement extends Statement {
 
   @override
   String toString() {
-    return '{${expression.toString()}}';
+    return '{$expression}';
   }
 }
 
@@ -112,9 +112,8 @@ class CallExpression extends Expression {
   }
 }
 
-// Integer Literals
-class IntegerLiteral extends Expression {
-  IntegerLiteral(Token token, int value)
+class NumberLiteral extends Expression {
+  NumberLiteral(Token token, int value)
       : value = value,
         super(token);
   final int value;
@@ -166,8 +165,10 @@ class InfixExpression extends Expression {
 /*
 A Program is collection of statements;
  */
-class Program {
+class Program extends Statement{
   List<Statement> statements = [];
+
+  Program(Token token) : super(token);
 
   @override
   String toString() {

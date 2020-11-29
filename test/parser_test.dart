@@ -63,20 +63,20 @@ void main() {
       }
     });
     test('Test for toString methods of VAR', () {
-      var program = Program();
+      var program = Program(Token(TType.VAR,content:'var'));
       var varStatement = VarStatement();
       varStatement.name = Expression(Token.fromIdentifier('data'));
       varStatement.value = Expression(Token.fromIdentifier('data2'));
       program.statements.add(varStatement);
-      expect(program.toString(), '{var data = data2;}',
+      expect(program.toString(), '{var data = [TType.IDENTIFIER,data2];}',
           reason: 'VarStatement toString method is faulty');
     });
     test('Test for toString method of RETURN', () {
-      var program = Program();
+      var program = Program(Token(TType.RETURN,content:'return'));
       var returnStatement = ReturnStatement();
       returnStatement.returnValue = Expression(Token.fromIdentifier('xy'));
       program.statements.add(returnStatement);
-      expect(program.toString(), '{return xy;}',
+      expect(program.toString(), '{return [TType.IDENTIFIER,xy];}',
           reason: 'ReturnStatement toString method is faulty');
     });
   });
@@ -106,10 +106,10 @@ void main() {
       expect(statement is ExpressionStatement, true,
           reason: 'Statement is not expression statement');
       expect(
-          (statement as ExpressionStatement).expression is IntegerLiteral, true,
+          (statement as ExpressionStatement).expression is NumberLiteral, true,
           reason: 'Statement.expression is not integer literal');
       expect(
-          ((statement as ExpressionStatement).expression as IntegerLiteral)
+          ((statement as ExpressionStatement).expression as NumberLiteral)
               .value,
           equals(10),
           reason: 'Identifier value is not hello');
@@ -142,7 +142,7 @@ void main() {
       expect(
           (((program.statements[0] as ExpressionStatement).expression
                       as PrefixExpression)
-                  .data as IntegerLiteral)
+                  .data as NumberLiteral)
               .value,
           val,
           reason: 'The number is not $val');
@@ -174,7 +174,7 @@ void main() {
       expect(
           (((program.statements[0] as ExpressionStatement).expression
                       as PrefixExpression)
-                  .data as IntegerLiteral)
+                  .data as NumberLiteral)
               .value,
           val,
           reason: 'The number is not $val');
@@ -207,9 +207,9 @@ void main() {
         expect(exStatement is InfixExpression, true,
             reason: 'Statement should be InfixExpression');
         var inStatement = exStatement as InfixExpression;
-        expect((inStatement.left as IntegerLiteral).value, left[i],
+        expect((inStatement.left as NumberLiteral).value, left[i],
             reason: 'Left data should be ${left[i]}');
-        expect((inStatement.right as IntegerLiteral).value, right[i],
+        expect((inStatement.right as NumberLiteral).value, right[i],
             reason: 'Left data should be ${right[i]}');
         expect(inStatement.operator, operator[i],
             reason: 'Operator should be ${operator[i]}');

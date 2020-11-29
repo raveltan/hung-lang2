@@ -108,7 +108,7 @@ class Parser {
           errors.add('Cannot parse string to int');
           return null;
         }
-        return IntegerLiteral(_currentToken, number);
+        return NumberLiteral(_currentToken, number);
       },
       TType.LEFT_PAREN: () {
         _nextToken();
@@ -248,7 +248,7 @@ class Parser {
 
   // Get the program AST for certain input
   Program parseProgram() {
-    var program = Program();
+    var program = Program(_currentToken);
     while (_currentToken.tokenType != TType.EOF) {
       var statement = _parseStatement();
       if (statement != null) {
