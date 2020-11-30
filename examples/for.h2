@@ -1,0 +1,9 @@
+var loop = f(index,endIndex,increment,currentValue) {
+    if( index == endIndex ){
+        currentValue
+    } else {
+        loop(index+1,endIndex,increment,currentValue+increment)
+    }
+}
+
+loop(0,10,5,0)

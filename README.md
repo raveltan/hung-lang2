@@ -14,7 +14,7 @@ Features available in Hung Lang 2:
     - var Statements
     - return Statements
     - Expression Statements
-    - Multiline statemnets
+    - Multiline statements
 - Expression
     - If expression
     - function literal
