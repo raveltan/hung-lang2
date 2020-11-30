@@ -1,4 +1,6 @@
-enum EntityType { NUMBER, BOOLEAN, NULL }
+import 'ast.dart';
+
+enum EntityType { NUMBER, BOOLEAN, NULL,RETURN,ERROR,FUNCTION }
 
 class Entity {
   Entity(this.type);
@@ -7,17 +9,17 @@ class Entity {
 }
 
 class Number extends Entity {
-  Number(this.value) : super(EntityType.NUMBER);
-  int value;
+  Number(this.data) : super(EntityType.NUMBER);
+  int data;
 
   @override
   String toString() {
-    return value.toString();
+    return data.toString();
   }
 
   @override
   bool operator ==(Object other) {
-    return other is Number && other.value == value;
+    return other is Number && other.data == data;
   }
 }
 
@@ -27,17 +29,17 @@ class Boolean extends Entity {
 
   factory Boolean(bool value) => value ? _true : _false;
 
-  Boolean._internal(this.value) : super(EntityType.BOOLEAN);
-  bool value;
+  Boolean._internal(this.data) : super(EntityType.BOOLEAN);
+  bool data;
 
   @override
   String toString() {
-    return value.toString();
+    return data.toString();
   }
 
   @override
   bool operator ==(Object other) {
-    return other is Boolean && other.value == value;
+    return other is Boolean && other.data == data;
   }
 }
 
@@ -50,5 +52,37 @@ class Null extends Entity {
   @override
   String toString() {
     return 'null';
+  }
+}
+
+class ReturnEntity extends Entity{
+  ReturnEntity(this.data) : super(EntityType.RETURN);
+  Entity data;
+
+  @override
+  String toString() {
+    return data.toString();
+  }
+}
+
+class ErrorEntity extends Entity{
+  ErrorEntity(this.errorType, this.message) : super(EntityType.ERROR);
+  String message;
+  String errorType;
+  @override
+  String toString() {
+    return 'Evaluation Error: ($errorType) - $message';
+  }
+}
+
+class FunctionEntity extends Entity{
+  FunctionEntity(this.params,this.body) : super(EntityType.FUNCTION);
+
+  List<Expression> params;
+  MultilineStatement body;
+
+  @override
+  String toString() {
+    return '<Function $hashCode>';
   }
 }

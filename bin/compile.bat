@@ -1,0 +1,1 @@
+dart2native main.dart -o hung.exe

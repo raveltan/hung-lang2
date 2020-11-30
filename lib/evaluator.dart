@@ -1,55 +1,134 @@
 import 'package:hung_lang2/ast.dart';
 import 'package:hung_lang2/entity.dart';
-import 'package:hung_lang2/parser.dart';
+import 'package:hung_lang2/system.dart';
+import 'package:hung_lang2/token.dart';
 
 class Evaluator {
-  Entity eval(Node node) {
+  Entity eval(Node node, System s) {
     switch (node.runtimeType) {
+      case CallExpression:
+        var func = eval((node as CallExpression).funcName,s);
+        if (func is ErrorEntity) return func;
+        var args = _evalExpression((node as CallExpression).args,s);
+        if (args.length == 1 && args[0] is ErrorEntity) return args[0];
+        return _doFunction(func, args,s);
+      case FunctionLiteral:
+        var fl = node as FunctionLiteral;
+        var params = fl.params;
+        var body = fl.body;
+        return FunctionEntity(params, body);
+      case VarStatement:
+        var value = eval((node as VarStatement).value,s);
+        if (value is ErrorEntity) return value;
+        s.setVariable((node as VarStatement).name.token.content, value);
+        break;
+      case ReturnStatement:
+        var result = eval((node as ReturnStatement).returnValue,s);
+        return result is ErrorEntity ? result : ReturnEntity(result);
       case Program:
-        return _evalStatements((node as Program).statements);
+        return _evalProgram((node as Program).statements,s);
       case MultilineStatement:
-        return _evalStatements((node as MultilineStatement).statements);
+        return _evalMultilineStatements(
+            (node as MultilineStatement).statements,s);
       case ExpressionStatement:
-        return eval((node as ExpressionStatement).expression);
+        return eval((node as ExpressionStatement).expression,s);
       case NumberLiteral:
         return Number((node as NumberLiteral).value);
       case BooleanLiteral:
         return Boolean((node as BooleanLiteral).data);
       case PrefixExpression:
-        var data = eval((node as PrefixExpression).data);
-        return _evalPrefixExpression((node as PrefixExpression).operator, data);
+        var data = eval((node as PrefixExpression).data,s);
+        return data is ErrorEntity
+            ? data
+            : _evalPrefixExpression((node as PrefixExpression).operator, data);
       case InfixExpression:
-        var leftData = eval((node as InfixExpression).left);
-        var rightData = eval((node as InfixExpression).right);
+        var leftData = eval((node as InfixExpression).left,s);
+        if (leftData is ErrorEntity) return leftData;
+        var rightData = eval((node as InfixExpression).right,s);
+        if (rightData is ErrorEntity) return rightData;
         return _evalInfixExpression(
             (node as InfixExpression).operator, leftData, rightData);
       case IfExpression:
-        return _evalIfExpression(node as IfExpression);
+        return _evalIfExpression(node as IfExpression,s);
+      // WARNING: DO NOT PUT CASES BELOW EXPRESSION, EVALUATOR MAY BREAK.
+      case Expression:
+        if ((node as Expression).token.tokenType == TType.IDENTIFIER) {
+          return _evalIdentifier(node as Expression,s);
+        }
     }
 
     return null;
   }
 
-  Entity _evalIfExpression(IfExpression expression) {
-    var condition = eval(expression.condition);
-    if ((condition is Boolean && condition.value == true) ||
-        (!(condition is Null) &&
-            !(condition is Boolean && condition.value == false))) {
-      var r =  eval(expression.result);
-      return r;
-    } else if (expression.alternative?.statements?.isNotEmpty ?? false) {
-      return eval(expression.alternative);
-    } else {
-      return null;
+  Entity _doFunction(Entity func, List<Entity> args,System s) {
+    if (!(func is FunctionEntity)) {
+      return ErrorEntity(
+          'NOT A FUNCTION', 'Unable to invoke from ${func.type}');
     }
+    var newSystem = System.closedSystem(s);
+    for(var i=0;i<(func as FunctionEntity).params.length;i++){
+      newSystem.setVariable((func as FunctionEntity).params[i].token.content, args[i]);
+      i = i;
+    }
+    var result = eval((func as FunctionEntity).body,newSystem);
+    if (result is ReturnEntity) return (result).data;
+    return result;
   }
 
-  Entity _evalStatements(List<Statement> data) {
-    Entity result;
-    for (var s in data) {
-      result = eval(s);
+  List<Entity> _evalExpression(List<Expression> datas,System s) {
+    var result = <Entity>[];
+    for (var data in datas) {
+      var evaluated = eval(data,s);
+      if (evaluated is ErrorEntity) return [evaluated];
+      result.add(evaluated);
     }
     return result;
+  }
+
+  Entity _evalIdentifier(Expression data,System s) {
+    var varContent = s.getVariable(data.token.content);
+    if (varContent == null) {
+      return ErrorEntity(
+          'UNDEFINED VARIABLE', 'Variable ${data.token.content} is undefined');
+    }
+    return varContent;
+  }
+
+  Entity _evalProgram(List<Statement> statements,System s) {
+    Entity result;
+    for (var statement in statements) {
+      result = eval(statement,s);
+      if (result is ReturnEntity) {
+        return result.data;
+      } else if (result is ErrorEntity) return result;
+    }
+    return result;
+  }
+
+  Entity _evalMultilineStatements(List<Statement> statements,System s) {
+    Entity result;
+    for (var statement in statements) {
+      result = eval(statement,s);
+      if (result != null && (result is ReturnEntity || result is ErrorEntity)) {
+        return result;
+      }
+    }
+    return result;
+  }
+
+  Entity _evalIfExpression(IfExpression expression,System s) {
+    var condition = eval(expression.condition,s);
+    if (condition is ErrorEntity) return condition;
+    if ((condition is Boolean && condition.data == true) ||
+        (!(condition is Null) &&
+            !(condition is Boolean && condition.data == false))) {
+      var r = eval(expression.result,s);
+      return r;
+    } else if (expression.alternative?.statements?.isNotEmpty ?? false) {
+      return eval(expression.alternative,s);
+    } else {
+      return Null();
+    }
   }
 
   Entity _evalInfixExpression(String operator, Entity left, Entity right) {
@@ -59,15 +138,19 @@ class Evaluator {
       return Boolean(left == right);
     } else if (operator == '!=') {
       return Boolean(!(left == right));
+    } else if (left.type != right.type) {
+      return ErrorEntity('Incompatible Type',
+          'Unable to complete binary operation between incompatible types ${left.type} and ${right.type}');
     } else {
-      return null;
+      return ErrorEntity('Unknown operator',
+          'Unable to complete binary operation between ${left.type}, ${right.type} with $operator');
     }
   }
 
   Entity _evalNumberInfixExpression(
       String operator, Entity left, Entity right) {
-    var valLeft = (left as Number).value;
-    var valRight = (right as Number).value;
+    var valLeft = (left as Number).data;
+    var valRight = (right as Number).data;
 
     switch (operator) {
       case '+':
@@ -87,7 +170,8 @@ class Evaluator {
       case '!=':
         return Boolean(valLeft != valRight);
       default:
-        return null;
+        return ErrorEntity('Unknown Operator',
+            'Unable to do number binary operation with $operator');
     }
   }
 
@@ -98,7 +182,8 @@ class Evaluator {
       case '-':
         return _evalMinOperatorExpression(data);
       default:
-        return null;
+        return ErrorEntity('Unknown operator',
+            'Unable to complete unary operation between $operator and ${data.type}');
     }
   }
 
@@ -116,5 +201,8 @@ class Evaluator {
   }
 
   Entity _evalMinOperatorExpression(Entity data) =>
-      data.type != EntityType.NUMBER ? null : Number(-(data as Number).value);
+      data.type != EntityType.NUMBER
+          ? ErrorEntity('Not A Number',
+              'Cannot do negation operation on non number type ${data.type}')
+          : Number(-(data as Number).data);
 }

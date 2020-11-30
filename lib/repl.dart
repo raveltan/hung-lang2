@@ -1,25 +1,31 @@
 import 'dart:io';
 
 import 'package:hung_lang2/evaluator.dart';
-import 'package:hung_lang2/lexer.dart';
 import 'package:hung_lang2/parser.dart';
-import 'package:hung_lang2/token.dart';
+import 'package:hung_lang2/system.dart';
 
-class Repl{
-  static void start(){
+class Repl {
+  static void start(bool debug) {
     var run = true;
     var e = Evaluator();
-    while(run){
+    var s = System();
+    while (run) {
       stdout.write('~ ');
       var input = stdin.readLineSync();
       // Check for REPL specific keyword
-      if (input == '.exit'){
+      if (input == '.exit') {
         return;
       }
       var p = Parser(input);
       var result = p.parseProgram();
-      print('Parsed: ' + (p.errors.isEmpty ? result.toString() : p.errors.toString()));
-      print('Eval: ' + e.eval(result).toString());
+      if (debug && p.errors.isEmpty) {
+        print('AST: $result');
+      } else if (p.errors.isNotEmpty) {
+        print('Parsing Errors: ${p.errors}');
+        continue;
+      }
+      var res = e.eval(result, s);
+      print(res == "" ? 'None' : res);
     }
   }
 }
