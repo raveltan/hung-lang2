@@ -1,9 +1,0 @@
-var permutation = f(value,index) {
-    if(index == 0){
-        value
-    }else{
-        permutation(value * index, index - 1)
-    }
-}
-
-permutation(1,10)

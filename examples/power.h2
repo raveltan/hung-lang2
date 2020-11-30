@@ -1,0 +1,10 @@
+var power = f(a,b){
+    var calculatePower = f(value,iteration,end,target){
+        if(iteration != end){
+        return calculatePower(value * target, iteration +1, end,target)
+        }
+        value
+    }
+    calculatePower(1,0,b,a)
+}
+power(5,3)

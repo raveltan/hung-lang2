@@ -1,0 +1,13 @@
+var fac = f(value,index) {
+    if(index == 0){
+        value
+    }else{
+        fac(value * index, index - 1)
+    }
+}
+
+var factorial = f(number){
+    fac(1,number)
+}
+
+factorial(3)
