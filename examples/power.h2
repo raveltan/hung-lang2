@@ -7,4 +7,15 @@ var power = f(a,b){
     }
     calculatePower(1,0,b,a)
 }
-power(5,3)
+var powOne = power(5,3)
+
+var newPowerFunction = f(a,b){
+    var res = 1;
+    for(1,b,1, f(){
+        var res = res * a;
+    })
+    return res;
+}
+
+var powTwo = newPowerFunction(5,3)
+write(powOne,powTwo);

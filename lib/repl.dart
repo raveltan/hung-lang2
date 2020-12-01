@@ -25,7 +25,7 @@ class Repl {
         continue;
       }
       var res = e.eval(result, s);
-      print(res == "" ? 'None' : res);
+      if(res !=null) print(res);
     }
   }
 }

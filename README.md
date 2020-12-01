@@ -40,3 +40,8 @@ In hung lang 2, function is always anonymous thus, can be used like a normal exp
 var a = f(a,b){20*a+b}
 f(a){a*20}(20)
 ```
+
+### BuiltIn Function
+There are a few builtin function available in hung lang 2:
+- write: to print a variable to the console
+

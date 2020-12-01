@@ -5,7 +5,7 @@ import 'package:hung_lang2/parser.dart';
 import 'package:hung_lang2/repl.dart';
 import 'package:hung_lang2/system.dart';
 
-void main(List<String> arguments) async{
+void main(List<String> arguments) async {
   var debug = false;
   var fileLocation = arguments.isNotEmpty ? arguments[0] : null;
   if (fileLocation == null) {
@@ -18,12 +18,13 @@ void main(List<String> arguments) async{
     var value = await file.readAsString();
     var p = Parser(value);
     var program = p.parseProgram();
-    if(p.errors.isNotEmpty) {
+    if (p.errors.isNotEmpty) {
       print(p.errors);
       return;
     }
     var e = Evaluator();
     var s = System();
-    print(e.eval(program, s));
+    var res = e.eval(program, s);
+    if (res != null) print(res);
   }
 }

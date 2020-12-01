@@ -8,7 +8,8 @@ class System {
           ? _parent.getVariable(key)
           : null;
   System();
-  void setVariable(String key, dynamic value) => _data[key] = value;
+  void setVariable(String key, dynamic value) =>
+      _parent != null && _parent.getVariable(key) != null ? _parent._data[key] = value : _data[key] = value;
 
   System.closedSystem(System parentSystem) : _parent = parentSystem;
 }

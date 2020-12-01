@@ -1,14 +1,8 @@
 var gcd = f(a,b){
-    var mod = f(a,b){
-        if(a < b){
-            return a
-        }
-            mod(a-b,b)
-    }
     if(b ==0){
         return a
     }
-      gcd(b, mod(a,b))
+    gcd(b, mod(a,b))
 }
 
 gcd(1071, 462)
