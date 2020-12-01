@@ -1,0 +1,7 @@
+var arLength = read()
+var data = array()
+for(1,arLength,1,f(){ var data = add(data,read()) })
+var result = 0
+each(data,f(a){ var result = result + a })
+
+result

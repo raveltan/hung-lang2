@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:hung_lang2/ast.dart';
 import 'package:hung_lang2/entity.dart';
+import 'package:hung_lang2/parser.dart';
 import 'package:hung_lang2/system.dart';
 import 'package:hung_lang2/token.dart';
+import 'dart:math' as math;
 
 class Evaluator {
+  static final random = math.Random();
   Entity eval(Node node, System s) {
     switch (node.runtimeType) {
       case CallExpression:
@@ -136,17 +141,17 @@ class Evaluator {
       // for(start,end,increment,function)
       // f(index,end){ //do your stuff }
       if (args.length != 4) {
-        return ErrorEntity(
-            'Incorrect params', 'For was not called with 4 args');
+        return ErrorEntity('Incorrect params',
+            'For was not called with 4 args, found ${args.length}');
       }
       if (args[0].type != EntityType.NUMBER ||
           args[1].type != EntityType.NUMBER ||
           args[2].type != EntityType.NUMBER) {
         return ErrorEntity(
-            'Incompatible types', 'While was called with incompatible types');
+            'Incompatible types', 'For was called with incompatible types');
       }
       for (var i = (args[0] as Number).data;
-          (args[1] as Number).data > (args[0] as Number).data
+          (args[2] as Number).data > 0
               ? i <= (args[1] as Number).data
               : i >= (args[1] as Number).data;
           i += (args[2] as Number).data) {
@@ -154,25 +159,159 @@ class Evaluator {
         _doFunction(args[3] as FunctionEntity, [args[0], args[1], args[2]], s);
       }
       return Entity(EntityType.NULL);
-    } else if (name == 'and'){
+    } else if (name == 'and') {
       // and(10>5,20>3) -> true
-      if(args.length !=2){
-        return ErrorEntity('Incorrect params', 'And was not called with 2 args');
+      if (args.length != 2) {
+        return ErrorEntity(
+            'Incorrect params', 'And was not called with 2 args');
       }
-      if(!(args[0] is Boolean && args[1] is Boolean)){
-        return ErrorEntity('Incompatible types', 'And was called with incompatible types');
+      if (!(args[0] is Boolean && args[1] is Boolean)) {
+        return ErrorEntity(
+            'Incompatible types', 'And was called with incompatible types');
       }
       return Boolean((args[0] as Boolean).data && (args[1] as Boolean).data);
-    }
-    else if (name == 'or'){
+    } else if (name == 'or') {
       // and(10>5,20>3) -> true
-      if(args.length !=2){
-        return ErrorEntity('Incorrect params', 'And was not called with 2 args');
+      if (args.length != 2) {
+        return ErrorEntity(
+            'Incorrect params', 'And was not called with 2 args');
       }
-      if(!(args[0] is Boolean && args[1] is Boolean)){
-        return ErrorEntity('Incompatible types', 'And was called with incompatible types');
+      if (!(args[0] is Boolean && args[1] is Boolean)) {
+        return ErrorEntity(
+            'Incompatible types', 'And was called with incompatible types');
       }
       return Boolean((args[0] as Boolean).data || (args[1] as Boolean).data);
+    } else if (name == 'eval') {
+      var input = stdin.readLineSync();
+      var parser = Parser(input);
+      if (parser.errors.isNotEmpty) {
+        return ErrorEntity('Read Error', 'Unable to interpret read message');
+      }
+      var program = parser.parseProgram();
+      var e = Evaluator();
+      return e.eval(program, s);
+    } else if (name == 'read') {
+      // TODO: add support for read message
+      // TODO: add support for reading string
+      var input = stdin.readLineSync();
+      var data = int.tryParse(input);
+      if (data == null) {
+        return ErrorEntity('Invalid Value', 'Unable to parse read value');
+      }
+      return Number(data);
+    } else if (name == 'array') {
+      var data = [];
+      for (var arg in args) {
+        if (arg is Number)
+          data.add(arg.data);
+        else if (arg is Boolean)
+          data.add(arg.data);
+        else if (arg is Array)
+          data.add(arg);
+        else if (arg is FunctionEntity) data.add(arg);
+      }
+      return Array(data);
+    } else if (name == 'get') {
+      // Add support for string
+      if (args.length != 2) {
+        return ErrorEntity(
+            'Incorrect params', 'Get was not called with 2 params');
+      }
+      if (!(args[0] is Array)) {
+        return ErrorEntity('Incompatible type',
+            'First param of get should be resulting in array');
+      }
+      if (!(args[1] is Number)) {
+        return ErrorEntity('Incompatible type',
+            'Second param of get should be resulting in number');
+      }
+      var data = (args[0] as Array).data;
+      var index = (args[1] as Number).data;
+      if (index > (data.length - 1)) {
+        return ErrorEntity(
+            'Index out of range', 'Unable to get index $index on $data');
+      }
+      var result = data[index];
+      if (result is int) return Number(result);
+      if (result is bool) return Boolean(result);
+      if (result is Array) return result;
+      if (result is FunctionEntity) return result;
+      return Entity(EntityType.NULL);
+    } else if (name == 'len') {
+      // addd strign support
+      if (args.length != 1)
+        return ErrorEntity(
+            'Incorrect params', 'Len was not called with 1 args');
+      if (args[0] is Array)
+        return Number((args[0] as Array).data.length);
+      else
+        return ErrorEntity('Incompatible types',
+            'Len is not applicable with type ${args[0].type}');
+    } else if (name == 'add') {
+      if (args.length != 2)
+        return ErrorEntity(
+            'Incorrect params', 'add was not called with 2 args');
+      if (!(args[0] is Array))
+        return ErrorEntity(
+            'Incompatible types', 'Add was called on ${args[0].type}');
+      var data = (args[0] as Array).data;
+      if (args[1] is Number) {
+        data.add((args[1] as Number).data);
+      } else if (args[1] is Boolean) {
+        data.add((args[1] as Boolean).data);
+      } else {
+        data.add(args[1]);
+      }
+      return Array(data);
+    } else if (name == 'remove') {
+      if (args.length != 2)
+        return ErrorEntity(
+            'Incorrect params', 'remove was not called with 2 args');
+      if (!(args[0] is Array))
+        return ErrorEntity(
+            'Incompatible types', 'remove was called on ${args[0].type}');
+      if (!(args[1] is Number))
+        return ErrorEntity('Incompatible types',
+            'index on remove should be number, got ${args[1].type}');
+      var data = (args[0] as Array).data;
+      data.removeAt((args[1] as Number).data);
+      return Array(data);
+    } else if (name == 'each') {
+      // each(array,function)
+      // f(data){ //do your stuff }
+      if (args.length != 2) {
+        return ErrorEntity('Incorrect params',
+            'Each was not called with 2 args, found ${args.length}');
+      }
+      if (args[0].type != EntityType.ARRAY ||
+          args[1].type != EntityType.FUNCTION) {
+        return ErrorEntity(
+            'Incompatible types', 'Each was called with incompatible types');
+      }
+      var datas = (args[0] as Array).data;
+      for (var data in datas) {
+        var tempArgs = (data is int)
+            ? Number(data)
+            : (data is bool)
+                ? Boolean(data)
+                : data;
+        _doFunction(args[1] as FunctionEntity, [tempArgs], s);
+      }
+      return Entity(EntityType.NULL);
+    } else if (name == 'isType') {
+      if (args.length != 2) {
+        return ErrorEntity('Incorrect params',
+            'isType was not called with 2 args, found ${args.length}');
+      }
+      return Boolean(args[0].type == args[1].type);
+    } else if(name == 'random'){
+      // Takes 1 int and generate random with this number as max value
+      if(args.length!=1) return ErrorEntity('Incorrect params', 'remove was not called with 2 args');
+      if(!(args[0] is Number)) return ErrorEntity('Incompatible types', 'Random was not called with number');
+      return Number(random.nextInt((args[0] as Number).data));
+    } else if(name == 'nihao'){
+      print('I GIAO WO LI GIAO GIAO!');
+      return Entity(EntityType.NULL);
     }
 
     return null;

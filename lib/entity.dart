@@ -1,6 +1,6 @@
 import 'ast.dart';
 
-enum EntityType { NUMBER, BOOLEAN, NULL,RETURN,ERROR,FUNCTION }
+enum EntityType { NUMBER, BOOLEAN, NULL,RETURN,ERROR,FUNCTION,ARRAY }
 
 class Entity {
   Entity(this.type);
@@ -20,6 +20,21 @@ class Number extends Entity {
   @override
   bool operator ==(Object other) {
     return other is Number && other.data == data;
+  }
+}
+
+class Array extends Entity{
+  Array(this.data) : super(EntityType.ARRAY);
+  List<dynamic> data;
+
+  @override
+  String toString() {
+    return '<Array $hashCode | $data >';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is Array && other.data == data;
   }
 }
 
