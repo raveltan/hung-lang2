@@ -139,15 +139,42 @@ class Evaluator {
         return ErrorEntity(
             'Incorrect params', 'For was not called with 4 args');
       }
-      if(args[0].type != EntityType.NUMBER || args[1].type!=EntityType.NUMBER || args[2].type != EntityType.NUMBER){
-        return ErrorEntity('Incompatible types', 'While wa called with incompatible types');
+      if (args[0].type != EntityType.NUMBER ||
+          args[1].type != EntityType.NUMBER ||
+          args[2].type != EntityType.NUMBER) {
+        return ErrorEntity(
+            'Incompatible types', 'While was called with incompatible types');
       }
-      for(var i = (args[0] as Number).data;i<=(args[1] as Number).data;i += (args[2] as Number).data){
+      for (var i = (args[0] as Number).data;
+          (args[1] as Number).data > (args[0] as Number).data
+              ? i <= (args[1] as Number).data
+              : i >= (args[1] as Number).data;
+          i += (args[2] as Number).data) {
         (args[0] as Number).data = i;
-        _doFunction(args[3] as FunctionEntity, [args[0], args[1],args[2]], s);
+        _doFunction(args[3] as FunctionEntity, [args[0], args[1], args[2]], s);
       }
       return Entity(EntityType.NULL);
+    } else if (name == 'and'){
+      // and(10>5,20>3) -> true
+      if(args.length !=2){
+        return ErrorEntity('Incorrect params', 'And was not called with 2 args');
+      }
+      if(!(args[0] is Boolean && args[1] is Boolean)){
+        return ErrorEntity('Incompatible types', 'And was called with incompatible types');
+      }
+      return Boolean((args[0] as Boolean).data && (args[1] as Boolean).data);
     }
+    else if (name == 'or'){
+      // and(10>5,20>3) -> true
+      if(args.length !=2){
+        return ErrorEntity('Incorrect params', 'And was not called with 2 args');
+      }
+      if(!(args[0] is Boolean && args[1] is Boolean)){
+        return ErrorEntity('Incompatible types', 'And was called with incompatible types');
+      }
+      return Boolean((args[0] as Boolean).data || (args[1] as Boolean).data);
+    }
+
     return null;
   }
 

@@ -10,4 +10,4 @@ var factorial = f(number){
     fac(1,number)
 }
 
-print(factorial(3))
+write(factorial(4))
