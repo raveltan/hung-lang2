@@ -1,0 +1,19 @@
+var fact = f(n) {
+    var index = 1
+    for(1,n,1,f(a) {
+        var index = index * a
+    })
+    return index
+}
+
+var permutation = f(a,b){
+    fact(a)/fact(a-b)
+}
+
+var combination = f(a,b) {
+    fact(a)/(fact(b) * fact(a-b))
+}
+
+
+write(permutation(10,3))
+write(combination(10,3))

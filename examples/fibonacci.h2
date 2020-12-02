@@ -1,0 +1,13 @@
+var fibo = f(a) {
+    if (a < 2) {
+        a
+    } else {fiboHelp(a)}
+}
+var fiboHelp = f(b) {
+    fibo(b-1) + fibo(b-2)
+}
+
+fibo(5)
+
+
+
