@@ -1,0 +1,6 @@
+var abs = f(a) {
+    if(a < 0) {var a = -a}
+    return a
+}
+
+write(abs(-94141))
