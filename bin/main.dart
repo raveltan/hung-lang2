@@ -10,7 +10,7 @@ void main(List<String> arguments) async {
   var fileLocation = arguments.isNotEmpty ? arguments[0] : null;
   if (fileLocation == null) {
     var dartVersion = Platform.version;
-    print('Hung Lang 2 (v0.1.0)');
+    print('Hung Lang 2 (v1.0.0)');
     print('Compiled on Dart $dartVersion');
     Repl.start(debug);
   } else {
