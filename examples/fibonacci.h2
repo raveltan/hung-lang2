@@ -7,7 +7,14 @@ var fiboHelp = f(b) {
     fibo(b-1) + fibo(b-2)
 }
 
-fibo(5)
+write('Please input your fibo number')
+var data = num(read())
+if(isType(data,10)){
+    write(fibo(data))
+} else {
+    write('Invalid input')
+}
+
 
 
 

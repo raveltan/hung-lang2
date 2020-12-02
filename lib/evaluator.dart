@@ -258,23 +258,45 @@ class Evaluator {
             'Len is not applicable with type ${args[0].type}');
       }
     } else if (name == 'add') {
-      if (args.length != 2) {
+      if (args.length != 3) {
         return ErrorEntity(
             'Incorrect params', 'add was not called with 2 args');
       }
-      if (!(args[0] is Array)) {
+      if (!(args[0] is Array && args[1] is Number)) {
         return ErrorEntity(
             'Incompatible types', 'Add was called on ${args[0].type}');
       }
       var data = (args[0] as Array).data;
-      if (args[1] is Number) {
-        data.add((args[1] as Number).data);
-      } else if (args[1] is Boolean) {
-        data.add((args[1] as Boolean).data);
-      } else if (args[1] is StringEntity) {
-        data.add((args[1] as StringEntity).data);
+      var index = (args[1] as Number).data;
+      if (args[2] is Number) {
+        data.insert(index, (args[2] as Number).data);
+      } else if (args[2] is Boolean) {
+        data.insert(index, (args[2] as Boolean).data);
+      } else if (args[2] is StringEntity) {
+        data.insert(index, (args[2] as StringEntity).data);
       } else {
-        data.add(args[1]);
+        data.insert(index, args[2]);
+      }
+      return Array(data);
+    } else if (name == 'update') {
+      if (args.length != 3) {
+        return ErrorEntity(
+            'Incorrect params', 'update was not called with 2 args');
+      }
+      if (!(args[0] is Array && args[1] is Number)) {
+        return ErrorEntity('Incompatible types',
+            'Update was called on ${args[0].type} and ${args[1].type}');
+      }
+      var data = (args[0] as Array).data;
+      var index = (args[1] as Number).data;
+      if (args[2] is Number) {
+        data[index] = ((args[2] as Number).data);
+      } else if (args[2] is Boolean) {
+        data[index] = ((args[2] as Boolean).data);
+      } else if (args[2] is StringEntity) {
+        data[index] = ((args[2] as StringEntity).data);
+      } else {
+        data[index] = (args[2]);
       }
       return Array(data);
     } else if (name == 'remove') {
@@ -344,15 +366,15 @@ class Evaluator {
     } else if (name == 'num') {
       if (args.length != 1) {
         return ErrorEntity(
-            'Incorrect params', 'int was not called with 1 params');
+            'Incorrect params', 'num was not called with 1 params');
       }
       if (!(args[0] is StringEntity)) {
         return ErrorEntity(
-            'Incomaptible types', 'Int was not called with String');
+            'Incompatible types', 'num was not called with String');
       }
       var result = int.tryParse((args[0] as StringEntity).data);
       return result == null ? Boolean(false) : Number(result);
-    } else if(name == 'id'){
+    } else if (name == 'id') {
       if (args.length != 1) {
         return ErrorEntity(
             'Incorrect params', 'Id was not called with 1 params');
@@ -401,18 +423,24 @@ class Evaluator {
 
   Entity _evalStringInfixExpression(
       String operator, Entity left, Entity right) {
-    if (!(operator == '+' || operator == '/')) {
+    if (!(operator == '+' || operator == '/' || operator == '==' || operator == '!=')) {
       return ErrorEntity('Incompatible type',
           'Unable to complete binary operation between ${left.type} and ${right.type}');
     }
     var leftValue = (left as StringEntity).data;
     var rightValue = (right as StringEntity).data;
 
-    switch (operator){
+    switch (operator) {
       case '+':
         return StringEntity(leftValue + rightValue);
       case '/':
         return Array(leftValue.split(rightValue));
+      case '==':
+        return Boolean(
+            (left as StringEntity).data == (right as StringEntity).data);
+      case '!=':
+        return Boolean(
+            (left as StringEntity).data != (right as StringEntity).data);
     }
   }
 
@@ -423,14 +451,8 @@ class Evaluator {
         right.type == EntityType.STRING) {
       return _evalStringInfixExpression(operator, left, right);
     } else if (operator == '==') {
-      if(left.type == EntityType && right.type == EntityType.STRING){
-        return Boolean((left as StringEntity).data == (right as StringEntity).data);
-      }
       return Boolean(left == right);
     } else if (operator == '!=') {
-      if(left.type == EntityType && right.type == EntityType.STRING){
-        return Boolean((left as StringEntity).data != (right as StringEntity).data);
-      }
       return Boolean(!(left == right));
     } else if (left.type != right.type) {
       return ErrorEntity('Incompatible Type',

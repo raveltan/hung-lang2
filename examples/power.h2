@@ -1,15 +1,4 @@
 var power = f(a,b){
-    var calculatePower = f(value,iteration,end,target){
-        if(iteration != end){
-        return calculatePower(value * target, iteration +1, end,target)
-        }
-        value
-    }
-    calculatePower(1,0,b,a)
-}
-var powOne = power(5,3)
-
-var newPowerFunction = f(a,b){
     var res = 1;
     for(1,b,1, f(){
         var res = res * a;
@@ -17,5 +6,15 @@ var newPowerFunction = f(a,b){
     return res;
 }
 
-var powTwo = newPowerFunction(5,3)
-write(powOne,powTwo);
+write('Power program')
+write('Input number a:')
+var a = num(read())
+write('Input number b:')
+var b = num(read())
+
+if(and(isType(a,10),isType(b,10))){
+    write('The result is ' + str(power(a,b)));
+}else{
+    write('Invalid input, please make sure it is number')
+}
+

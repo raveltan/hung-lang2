@@ -1,6 +1,11 @@
-var arLength = read()
+write('Type your array length')
+var arLength = num(read())
 var data = array()
-for(1,arLength,1,f(){ var data = add(data,read()) })
+for(1,arLength,1,f(a){
+    write('Insert ' + str(a) + ' value ')
+    var val = num(read())
+    var data = add(data,len(data),val)
+})
 var result = 0
 each(data,f(a){ var result = result + a })
 

@@ -28,7 +28,7 @@ class StringEntity extends Entity{
 
   @override
   String toString() {
-    return "'$data'";
+    return '$data';
   }
 }
 

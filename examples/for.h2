@@ -1,16 +1,6 @@
-var loop = f(index,endIndex,increment,currentValue) {
-    if( index == endIndex ){
-        currentValue
-    } else {
-        loop(index+1,endIndex,increment,currentValue+increment)
-    }
-}
-
-write(loop(1,100,23,4))
-
 var result = 4
 for(1,100,23, f(a){
    var result = result + a
 })
 
-write(result);
+result;
