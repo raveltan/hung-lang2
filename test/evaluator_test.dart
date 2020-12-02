@@ -186,7 +186,7 @@ void main() {
         reason: 'Entity should be function entity');
     var fe = entity as FunctionEntity;
     expect(fe.params.length == 1, true, reason: 'Params length should be 1');
-    expect(fe.params[0].token.content == "x", true);
+    expect(fe.params[0].token.content == 'x', true);
     expect(fe.body.statements.length == 1, true);
   });
   test('Test for function evaluation 2', () {

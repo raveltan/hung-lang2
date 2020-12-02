@@ -133,6 +133,15 @@ class BooleanLiteral extends Expression {
     return data.toString();
   }
 }
+class StringLiteral extends Expression{
+  StringLiteral(Token token,String data) : data = data,super(token);
+  String data;
+
+  @override
+  String toString() {
+    return data.toString();
+  }
+}
 
 class PrefixExpression extends Expression {
   PrefixExpression(Token token, String operator)

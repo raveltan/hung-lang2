@@ -4,6 +4,7 @@ enum TType {
   EOF,
   IDENTIFIER,
   NUMBER,
+  STRING,
   // Operators
   EQUAL,
   ADD,

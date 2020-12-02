@@ -53,6 +53,7 @@ class Parser {
     _nextToken();
     // Setup the parsing function for different prefix expressions.
     _parsePrefixFunctions = {
+      TType.STRING:() => StringLiteral(_currentToken,_currentToken.content),
       TType.METHOD: () {
         var funcLiteral = FunctionLiteral(_currentToken);
 
@@ -73,17 +74,17 @@ class Parser {
       TType.IF: () {
         var expression = IfExpression(_currentToken);
         if (!_expectAndPeek(TType.LEFT_PAREN)) {
-          errors.add("Cannot find left parentheses");
+          errors.add('Cannot find left parentheses');
           return null;
         }
         _nextToken();
         expression.condition = _parseExpression(OpOrder.LOWEST.getPrecedence());
         if (!_expectAndPeek(TType.RIGHT_PAREN)) {
-          errors.add("Cannot find right parentheses");
+          errors.add('Cannot find right parentheses');
           return null;
         }
         if (!_expectAndPeek(TType.LEFT_BRACE)) {
-          errors.add("Cannot find left brace (multiline statement opening)");
+          errors.add('Cannot find left brace (multiline statement opening)');
           return null;
         }
         expression.result = _parseMultilineStatement();

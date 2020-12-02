@@ -3,6 +3,7 @@ import 'package:hung_lang2/token.dart';
 import 'package:test/test.dart';
 
 void main() {
+  // Add test for strings
   test('Test for basic operator and delimiter', () {
     var input = '=+,(){};';
     var result = [
@@ -110,7 +111,7 @@ void main() {
       Token(TType.SEMICOLON, content: ';'),
       Token(TType.NOT, content: '!'),
       Token.fromIdentifier('input'),
-      Token(TType.SEMICOLON,content: ';'),
+      Token(TType.SEMICOLON, content: ';'),
       Token(TType.EOF),
     ];
     var lexer = Lexer(input);
@@ -125,41 +126,46 @@ void main() {
       var add = f(x,y){
       x + y;
       }
-      
+      var a = 'hello';
       var result = add(number,5);
       ''';
     // Added the result and test
     var result = [
       Token.fromIdentifier('var'),
       Token.fromIdentifier('number'),
-      Token(TType.EQUAL,content: '='),
+      Token(TType.EQUAL, content: '='),
       Token(TType.NUMBER, content: '5'),
-      Token(TType.SEMICOLON,content: ';'),
+      Token(TType.SEMICOLON, content: ';'),
       Token.fromIdentifier('var'),
       Token.fromIdentifier('add'),
-      Token(TType.EQUAL,content: '='),
+      Token(TType.EQUAL, content: '='),
       Token.fromIdentifier('f'),
-      Token(TType.LEFT_PAREN,content: '('),
+      Token(TType.LEFT_PAREN, content: '('),
       Token.fromIdentifier('x'),
-      Token(TType.COMMA,content: ','),
+      Token(TType.COMMA, content: ','),
       Token.fromIdentifier('y'),
-      Token(TType.RIGHT_PAREN,content: ')'),
-      Token(TType.LEFT_BRACE,content: '{'),
+      Token(TType.RIGHT_PAREN, content: ')'),
+      Token(TType.LEFT_BRACE, content: '{'),
       Token.fromIdentifier('x'),
-      Token(TType.ADD,content: '+'),
+      Token(TType.ADD, content: '+'),
       Token.fromIdentifier('y'),
+      Token(TType.SEMICOLON, content: ';'),
+      Token(TType.RIGHT_BRACE, content: '}'),
+      Token.fromIdentifier('var'),
+      Token.fromIdentifier('a'),
+      Token(TType.EQUAL, content: '='),
+      Token(TType.STRING, content: 'hello'),
       Token(TType.SEMICOLON,content: ';'),
-      Token(TType.RIGHT_BRACE,content: '}'),
       Token.fromIdentifier('var'),
       Token.fromIdentifier('result'),
-      Token(TType.EQUAL,content: '='),
+      Token(TType.EQUAL, content: '='),
       Token.fromIdentifier('add'),
-      Token(TType.LEFT_PAREN,content: '('),
+      Token(TType.LEFT_PAREN, content: '('),
       Token.fromIdentifier('number'),
-      Token(TType.COMMA,content: ','),
+      Token(TType.COMMA, content: ','),
       Token(TType.NUMBER, content: '5'),
-      Token(TType.RIGHT_PAREN,content: ')'),
-      Token(TType.SEMICOLON,content: ';'),
+      Token(TType.RIGHT_PAREN, content: ')'),
+      Token(TType.SEMICOLON, content: ';'),
       Token(TType.EOF)
     ];
     var lexer = Lexer(input);

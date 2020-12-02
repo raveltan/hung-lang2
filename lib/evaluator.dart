@@ -9,8 +9,11 @@ import 'dart:math' as math;
 
 class Evaluator {
   static final random = math.Random();
+
   Entity eval(Node node, System s) {
     switch (node.runtimeType) {
+      case StringLiteral:
+        return StringEntity((node as StringLiteral).data);
       case CallExpression:
         var args = _evalExpression((node as CallExpression).args, s);
         if (args.length == 1 && args[0] is ErrorEntity) return args[0];
@@ -85,7 +88,6 @@ class Evaluator {
     for (var i = 0; i < (func as FunctionEntity).params.length; i++) {
       newSystem.setVariable(
           (func as FunctionEntity).params[i].token.content, args[i]);
-      i = i;
     }
     var result = eval((func as FunctionEntity).body, newSystem);
     if (result is ReturnEntity) return (result).data;
@@ -182,8 +184,15 @@ class Evaluator {
       }
       return Boolean((args[0] as Boolean).data || (args[1] as Boolean).data);
     } else if (name == 'eval') {
-      var input = stdin.readLineSync();
-      var parser = Parser(input);
+      if (args.length != 1) {
+        return ErrorEntity(
+            'Incorrect params', 'Eval was not called with 1 params');
+      }
+      if (!(args[0] is StringEntity)) {
+        return ErrorEntity(
+            'Incompatible Types', 'Eval was not called with string');
+      }
+      var parser = Parser((args[0] as StringEntity).data);
       if (parser.errors.isNotEmpty) {
         return ErrorEntity('Read Error', 'Unable to interpret read message');
       }
@@ -191,24 +200,21 @@ class Evaluator {
       var e = Evaluator();
       return e.eval(program, s);
     } else if (name == 'read') {
-      // TODO: add support for read message
-      // TODO: add support for reading string
+      // Always reads a string, use eval to get value
       var input = stdin.readLineSync();
-      var data = int.tryParse(input);
-      if (data == null) {
-        return ErrorEntity('Invalid Value', 'Unable to parse read value');
-      }
-      return Number(data);
+      return StringEntity(input);
     } else if (name == 'array') {
       var data = [];
       for (var arg in args) {
-        if (arg is Number)
+        if (arg is Number) {
           data.add(arg.data);
-        else if (arg is Boolean)
+        } else if (arg is Boolean) {
           data.add(arg.data);
-        else if (arg is Array)
+        } else if (arg is StringEntity) {
+          data.add(arg.data);
+        } else if (arg is Array) {
           data.add(arg);
-        else if (arg is FunctionEntity) data.add(arg);
+        } else if (arg is FunctionEntity) data.add(arg);
       }
       return Array(data);
     } else if (name == 'get') {
@@ -234,45 +240,56 @@ class Evaluator {
       var result = data[index];
       if (result is int) return Number(result);
       if (result is bool) return Boolean(result);
+      if (result is String) return StringEntity(result);
       if (result is Array) return result;
       if (result is FunctionEntity) return result;
       return Entity(EntityType.NULL);
     } else if (name == 'len') {
-      // addd strign support
-      if (args.length != 1)
+      if (args.length != 1) {
         return ErrorEntity(
             'Incorrect params', 'Len was not called with 1 args');
-      if (args[0] is Array)
+      }
+      if (args[0] is Array) {
         return Number((args[0] as Array).data.length);
-      else
+      } else if (args[0] is StringEntity) {
+        return Number((args[0] as StringEntity).data.length);
+      } else {
         return ErrorEntity('Incompatible types',
             'Len is not applicable with type ${args[0].type}');
+      }
     } else if (name == 'add') {
-      if (args.length != 2)
+      if (args.length != 2) {
         return ErrorEntity(
             'Incorrect params', 'add was not called with 2 args');
-      if (!(args[0] is Array))
+      }
+      if (!(args[0] is Array)) {
         return ErrorEntity(
             'Incompatible types', 'Add was called on ${args[0].type}');
+      }
       var data = (args[0] as Array).data;
       if (args[1] is Number) {
         data.add((args[1] as Number).data);
       } else if (args[1] is Boolean) {
         data.add((args[1] as Boolean).data);
+      } else if (args[1] is StringEntity) {
+        data.add((args[1] as StringEntity).data);
       } else {
         data.add(args[1]);
       }
       return Array(data);
     } else if (name == 'remove') {
-      if (args.length != 2)
+      if (args.length != 2) {
         return ErrorEntity(
             'Incorrect params', 'remove was not called with 2 args');
-      if (!(args[0] is Array))
+      }
+      if (!(args[0] is Array)) {
         return ErrorEntity(
             'Incompatible types', 'remove was called on ${args[0].type}');
-      if (!(args[1] is Number))
+      }
+      if (!(args[1] is Number)) {
         return ErrorEntity('Incompatible types',
             'index on remove should be number, got ${args[1].type}');
+      }
       var data = (args[0] as Array).data;
       data.removeAt((args[1] as Number).data);
       return Array(data);
@@ -283,7 +300,7 @@ class Evaluator {
         return ErrorEntity('Incorrect params',
             'Each was not called with 2 args, found ${args.length}');
       }
-      if (args[0].type != EntityType.ARRAY ||
+      if (!(args[0].type == EntityType.ARRAY) ||
           args[1].type != EntityType.FUNCTION) {
         return ErrorEntity(
             'Incompatible types', 'Each was called with incompatible types');
@@ -294,7 +311,9 @@ class Evaluator {
             ? Number(data)
             : (data is bool)
                 ? Boolean(data)
-                : data;
+                : data is String
+                    ? StringEntity(data)
+                    : data;
         _doFunction(args[1] as FunctionEntity, [tempArgs], s);
       }
       return Entity(EntityType.NULL);
@@ -304,16 +323,42 @@ class Evaluator {
             'isType was not called with 2 args, found ${args.length}');
       }
       return Boolean(args[0].type == args[1].type);
-    } else if(name == 'random'){
+    } else if (name == 'random') {
       // Takes 1 int and generate random with this number as max value
-      if(args.length!=1) return ErrorEntity('Incorrect params', 'remove was not called with 2 args');
-      if(!(args[0] is Number)) return ErrorEntity('Incompatible types', 'Random was not called with number');
+      if (args.length != 1) {
+        return ErrorEntity(
+            'Incorrect params', 'remove was not called with 2 args');
+      }
+      if (!(args[0] is Number)) {
+        return ErrorEntity(
+            'Incompatible types', 'Random was not called with number');
+      }
       return Number(random.nextInt((args[0] as Number).data));
-    } else if(name == 'nihao'){
+    } else if (name == 'nihao') {
       print('I GIAO WO LI GIAO GIAO!');
       return Entity(EntityType.NULL);
+    } else if (name == 'str') {
+      var res = '';
+      args.forEach((element) => res += element.toString());
+      return StringEntity(res);
+    } else if (name == 'num') {
+      if (args.length != 1) {
+        return ErrorEntity(
+            'Incorrect params', 'int was not called with 1 params');
+      }
+      if (!(args[0] is StringEntity)) {
+        return ErrorEntity(
+            'Incomaptible types', 'Int was not called with String');
+      }
+      var result = int.tryParse((args[0] as StringEntity).data);
+      return result == null ? Boolean(false) : Number(result);
+    } else if(name == 'id'){
+      if (args.length != 1) {
+        return ErrorEntity(
+            'Incorrect params', 'Id was not called with 1 params');
+      }
+      return StringEntity(args[0].hashCode.toString());
     }
-
     return null;
   }
 
@@ -354,12 +399,38 @@ class Evaluator {
     }
   }
 
+  Entity _evalStringInfixExpression(
+      String operator, Entity left, Entity right) {
+    if (!(operator == '+' || operator == '/')) {
+      return ErrorEntity('Incompatible type',
+          'Unable to complete binary operation between ${left.type} and ${right.type}');
+    }
+    var leftValue = (left as StringEntity).data;
+    var rightValue = (right as StringEntity).data;
+
+    switch (operator){
+      case '+':
+        return StringEntity(leftValue + rightValue);
+      case '/':
+        return Array(leftValue.split(rightValue));
+    }
+  }
+
   Entity _evalInfixExpression(String operator, Entity left, Entity right) {
     if (left.type == EntityType.NUMBER && right.type == EntityType.NUMBER) {
       return _evalNumberInfixExpression(operator, left, right);
+    } else if (left.type == EntityType.STRING &&
+        right.type == EntityType.STRING) {
+      return _evalStringInfixExpression(operator, left, right);
     } else if (operator == '==') {
+      if(left.type == EntityType && right.type == EntityType.STRING){
+        return Boolean((left as StringEntity).data == (right as StringEntity).data);
+      }
       return Boolean(left == right);
     } else if (operator == '!=') {
+      if(left.type == EntityType && right.type == EntityType.STRING){
+        return Boolean((left as StringEntity).data != (right as StringEntity).data);
+      }
       return Boolean(!(left == right));
     } else if (left.type != right.type) {
       return ErrorEntity('Incompatible Type',

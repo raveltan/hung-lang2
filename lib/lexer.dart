@@ -30,6 +30,14 @@ class Lexer {
       _readNextCharacter();
     }
     switch (_current) {
+      case "'":
+        var _pos = _position + 1;
+        while(true){
+          _readNextCharacter();
+          if(_current == "'") break;
+        }
+        result = Token(TType.STRING,content: _input.substring(_pos,_position));
+        break;
       case '=':
         {
           // Add condition for double operator
