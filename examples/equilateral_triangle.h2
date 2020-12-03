@@ -1,4 +1,4 @@
-var rightTriangle = f(i){
+var equilateralTriangle = f(i){
     var pref = '*'
     var space = ' '
     var temp = ''
@@ -16,4 +16,4 @@ var rightTriangle = f(i){
 
 write('Enter amount of rows:' )
 var input = read()
-rightTriangle(num(input))
+equilateralTriangle(num(input))
