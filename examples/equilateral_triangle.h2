@@ -15,5 +15,6 @@ var equilateralTriangle = f(i){
 }
 
 write('Enter amount of rows:' )
-var input = read()
-equilateralTriangle(num(input))
+var input = num(read())
+if(isType(input,0)){
+    equilateralTriangle(input)} else {write('Invalid input!')}

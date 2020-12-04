@@ -15,5 +15,6 @@ var rightTriangle = f(i){
 }
 
 write('Enter amount of rows:' )
-var input = read()
-rightTriangle(num(input))
+var input = num(read())
+if(isType(input,0)){
+    rightTriangle(input)} else {write('Invalid input!')}
