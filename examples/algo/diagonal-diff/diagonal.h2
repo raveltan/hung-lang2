@@ -1,0 +1,32 @@
+'Result: ' + str(f(size){
+    var matrix = array()
+    var first = 0
+    var second = 0
+
+    for(0,size - 1,1,f(x){
+        add(matrix,len(matrix),array())
+        var innerArray = get(matrix,x)
+        for(0,size - 1,1,f(y){
+            write('Input ' + str(x) + '-' + str(y) + ':')
+            var temp = num(read())
+            add(innerArray,len(innerArray), temp)
+        })
+    })
+    write('Matrix: ' + str(matrix))
+
+    for(0,size - 1,1,f(x){
+        var o = 0
+        var p = 0
+        for(0,size-1,1,f(y){
+            if(x == y){
+                var o = o + get(get(matrix,x),y)
+            }
+            if( x == size - y - 1){
+                var p = p + get(get(matrix,x),y)
+            }
+        })
+        var first = first + o
+        var second = second + p
+    })
+    return if(first > second) {first-second} else {second-first}
+}(num(read())))

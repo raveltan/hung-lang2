@@ -1,0 +1,24 @@
+f(x){
+    var input = x / ' '
+    var data = array()
+    each(input,f(x){ add(data,len(data),num(x)) })
+
+    var x = get(data,0)
+    var v = get(data,1)
+    var y = get(data,2)
+    var vy = get(data,3)
+
+    if( or(and(x > y, v > vy) , and(x < y, v < vy) ) ){
+        return ('NO')
+    }
+    if( and(x != y, v == vy) ){
+        return ('NO')
+    }
+    if( and(x == y, v == vy) ){
+        return ('YES')
+    }
+    if( mod((x-y),(v-vy)) == 0 ){
+        return ('YES')
+    }
+    return('NO')
+}(read())

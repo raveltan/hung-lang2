@@ -1,0 +1,9 @@
+var input = read()
+var isPm = len(input / 'PM') == 2
+var input = get(input / if(isPm) {'PM'} else {'AM'},0) / ':'
+write( if(isPm)
+    {str(num(get(input,0))+12)}
+    else
+    {get(input,0)} + ':' + get(input,1));
+
+
