@@ -1,0 +1,18 @@
+var first = read() / ' '
+var second = read() / ' '
+var player = array()
+for(0, num( get(first,0) ) ,1,f(i){ add(player,len(player), num(get(second,i))) })
+var result = get(player,0)
+var st = 0
+for(1, (num(get(first,0))), 1 , f(i){
+    if(st == num(get(first,1))){ return 0 }
+    if(result > (get(player,i-1))){
+        var st = st + 1
+        return 0
+    }
+    var st = 1
+    var result = get(player,i-1)
+});
+result
+
+
