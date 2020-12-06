@@ -1,0 +1,22 @@
+var bubbleSort = f(arr) {
+    var n = len(arr)
+    for(0,n-1,1,f(a){
+        for(0,n-a-1,1,f(b){
+            if(get(arr,b) > get(arr,b+1)){
+                var temp = get(arr,b)
+                update(arr,b,get(arr,b+1))
+                update(arr,b+1,temp)
+            }
+        })
+    })
+}
+
+var a = array()
+for(0,40,1,f(){
+    add(a,len(a),random(100))
+})
+write('Array before sorting:')
+write(a)
+bubbleSort(a)
+write('Array after bubble sort:')
+write(a)
