@@ -1,0 +1,13 @@
+var leftTriangle = f(i){
+    var pref = '*'
+    var temp = ''
+    for(1,i,1,f(){
+       var temp = temp + pref
+       write(temp)
+    })
+}
+
+write('Enter amount of rows:' )
+var input = num(read())
+if(isType(input,0)){
+    leftTriangle(input)} else {write('Invalid input!')}

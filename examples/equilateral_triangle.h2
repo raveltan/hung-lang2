@@ -1,0 +1,20 @@
+var equilateralTriangle = f(i){
+    var pref = '*'
+    var space = ' '
+    var temp = ''
+    for(1,i,1,f(a){
+        for(1,i-a,1,f(){
+            var temp = temp + space
+        })
+        for(1,a*2-1,1,f(){
+            var temp = temp + pref
+        })
+        write(temp)
+        var temp = ''
+    })
+}
+
+write('Enter amount of rows:' )
+var input = num(read())
+if(isType(input,0)){
+    equilateralTriangle(input)} else {write('Invalid input!')}
