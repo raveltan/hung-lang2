@@ -1,0 +1,27 @@
+var Search = f(arr, x){
+    var counter = 0
+    for(0,len(arr),1,f(a){
+        if(get(arr,a) == x){
+            write('The element',x,'is found at index',a)
+            var counter = counter + 1
+        }
+    })
+    if(counter == 0){
+        write('The element',x,'is not found on the array')
+    }
+    return ''
+}
+
+var arr = array()
+for(0,10,1,f(a){
+    add(arr,len(arr),a)
+})
+
+write('Array = ', arr)
+write('Please input the number you want to search in the array:')
+var data = num(read())
+if(isType(data,10)){
+    Search(arr,data)
+} else {
+    write('Invalid input')
+}
