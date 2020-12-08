@@ -1,0 +1,24 @@
+var prime = f(number){
+    var counter = 0
+    if(number > 1){
+        for(2,number-1,1,f(a){
+            if(mod(number,a) == 0){
+                var counter = counter + 1
+            }
+        })
+        if(counter == 0){
+            write(number,'is a prime number')
+        }
+        else{
+            write(number,'is not a prime number')
+        }
+    }
+    else{
+        write(number, 'is not a prime number')
+    }
+    return ''
+}
+
+write('input number to check if its prime number or not :')
+var number = read()
+prime(num(number))
