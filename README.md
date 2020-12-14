@@ -1,5 +1,9 @@
 # Hung Lang 2
 
+[![hung](https://snapcraft.io/hung/badge.svg)](https://snapcraft.io/hung)
+
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/hung)
+
 A programming language that is created to teach beginner with computer programming, in a way that is easy as python,
 retain c-like syntax as java but still is not very confusing too learn.
 
