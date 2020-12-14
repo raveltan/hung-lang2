@@ -1,0 +1,22 @@
+name: hung
+version: 1.0.0
+summary: Cross-Platform interpreted C-like language for beginner.
+description: |
+  Hung lang 2 is a C-like programming language that
+  is designed for beginner and employs many feature
+  that is available in many programming language.
+  for more information, head to https://github.com/raveltan/hung-lang2
+
+confinement: devmode
+base: core18
+
+parts:
+  hung:
+    plugin: dump
+    source: .
+    override-pull: wget https://github.com/raveltan/hung-lang2/releases/download/1.0.0/hung && chmod +x ./hung 
+    build-packages:
+      - wget
+apps:
+  hung:
+    command: hung
