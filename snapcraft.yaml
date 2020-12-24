@@ -7,8 +7,9 @@ description: |
   that is available in many programming language.
   for more information, head to https://github.com/raveltan/hung-lang2
 
-confinement: devmode
+confinement: strict
 base: core18
+grade: stable
 
 parts:
   hung:
@@ -20,3 +21,6 @@ parts:
 apps:
   hung:
     command: hung
+    plugs:
+    - home
+
