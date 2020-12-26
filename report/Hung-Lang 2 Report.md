@@ -308,12 +308,19 @@ Finally we are going to run the code within the main function of our project, **
 
 ***\*Test Run Analysis\****
 
-Through our test driven development design we were able to successfully test multiple cases within the lexer, parser and evaluator processes within our language. We had also done some practical coding to show the usages of our programming language. We were able to successfully create some examples of these programs and even some of the algorithms we learnt for our lab assignment.
+Through our test driven development design we were able to successfully test multiple cases within the lexer, parser and evaluator processes within our language. 
+![img](https://lh6.googleusercontent.com/oJqNlaT6ER0AKl8aQjKpFgSdSBdOoejBlNprmPoqEkeguweAibj7O4yHpumOjaGeasiFKTJTXc3Zr7C2Z0UQgHe4KrtIMq41Pjx6EJTZxKO9h6yexF_tc0sVFJlp9Ev60lntWJPy)
+
+Here is an example of a test case to check whether the number data type is functioning properly within our language located in the test for the evaluator. There are multiple test cases within the whole test and using the IDE we are using for our development we use the built in test feature to run the whole test. If at any point during the test, the program fails a test case, it will immediately stop the test and return the specific error and which test case has been failed. In the case that all test cases have been fulfilled, the test program will exit normally signifying that this part of the programming language works properly.
+
+
+
+\#### Discussions
+
+We had also done some practical coding to show the usages of our programming language. We were able to successfully create some examples of these programs and even some of the algorithms we learnt for our lab assignment.
 ![img](https://lh5.googleusercontent.com/PbvoCNaQVuoE9D0mUUnFR894BdL_KTs2akTNFNBGIcwp0knPqlmMKCn9tYFyrqODLqmnbYkDQIYpJEkUrStSlXO8UBfXEIbzj_eOHseFqv3meesS5-jifFyX_EXSVPqeEW_HocBL)
 
 An example of that code writes here, this code defines an algorithm that is used to check when two objects, jumping on a number line are going to intersect or not within the same number of jumps. First a function is defined, and then the user’s input is read and the code returns the strings yes or no to signify whether or not the two objects are going to intersect or not. More details of these examples can be seen at our github in **examples/algo** where this specific one is called number-jump with the code and problem defined there. More information about the syntax and workings of our code can be found within the guide section below.
-
-# #### Discussions
 
 
 
