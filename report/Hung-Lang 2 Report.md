@@ -12,13 +12,13 @@
 
 ​         
 
-​               \1.     **Tandra**        **Vincentius**     **2301894804**
+​               1.     **Tandra**        **Vincentius**     **2301894804**
 
-​              \2.     **Tanjaya**       **Ravel**         **2301890320**    
+​              2.     **Tanjaya**       **Ravel**         **2301890320**    
 
-​              \3.  **Yowen**    **Yowen**    **2301902390**
+​              3.  **Yowen**    **Yowen**    **2301902390**
 
-​      \4.  **Santoso**    **William**    **2301890390**
+​      4.  **Santoso**    **William**    **2301890390**
 
 **Course Code**  **: COMP6340**                   **Course Name**            **: Analysis of Algorithms**
 
@@ -32,7 +32,7 @@
 
 **Title of Assignment**    :                         
 
-Hung-Lang2
+Hung-Lang 2
 
  
 
@@ -46,7 +46,7 @@ Hung-Lang2
 
 **Due Date**    **:**  Week 13              **Submission Date**  **:** Week 13  
 
-# ####** Hung-Lang 2 **####
+# Hung-Lang 2 
 
 
 
@@ -64,21 +64,21 @@ William Lucianto Santoso 2301890390
 
 
 
-# #### Introduction
+# Introduction
 
-***\*Background\****
+**Background**
 
 We decided to choose a compiler - oriented topic where we are going to create the interpreter for our very own programming language. This programming language is based on a previous project hung - lang a programming language previously developed in Python.
 
 
 
-****Problem description\****
+***Problem description***
 
 During our first semester of the Computer Science program we were introduced to the world of programming through the Python programming language, now the 2nd most popular programming language in the world. However, as we moved on to the second semester we were introduced to languages such as Java and C++ which are vastly different from Python. To satisfy two sides of the problem we aim to keep the simplicity of Python while introducing some aspects offered in different programming languages.
 
 
 
-***\*Target/aims (to solve the problem)\****
+*Target/aims (to solve the problem)*
 
 So we decided to create a programming language that is easy to learn (like python) but at the same time also not whitespace sensitive, allowing better formatting and avoiding beginner confusion related to whitespaces. This programming language would act as an educational alternative for beginner programmers that could potentially replace Python as an example as the first language they are going to learn. Our programming language is not optimized for speed or runtime but it is going to remain powerful enough for anyone to learn and use for their programming needs.
 
@@ -86,7 +86,7 @@ So we decided to create a programming language that is easy to learn (like pytho
 
 
 
-# #### Related works
+# Related works
 
 
 
@@ -94,7 +94,7 @@ T.H. Cormen, C.E. Leiserson, R.L. Rivest, Introduction to Algorithms (MIT Press,
 
 https://github.com/raveltan/hung-lang
 
-# ##### Proposed method(s)/solution
+# Proposed method(s)/solution
 
 
 
@@ -120,7 +120,7 @@ Languages that is quite popular and matches this criteria are:
 
 
 
-All of these 3 language can be compiled to native code and have some kind of garbage collection*
+All of these 3 language can be compiled to native code and have some kind of garbage collection
 
 
 
@@ -132,11 +132,11 @@ Let's take a look at each of this following language and see it's pro and cons:
 
 
 
-\1. Go
+1. Go
 
 
 
-  ***\*Pro\****:
+  ***Pros***
 
 
 
@@ -150,7 +150,7 @@ Let's take a look at each of this following language and see it's pro and cons:
 
 
 
-  ***\*Cons\****:
+  ***Cons***
 
 
 
@@ -158,11 +158,11 @@ Let's take a look at each of this following language and see it's pro and cons:
 
 
 
-\2. Rust
+2. Rust
 
 
 
-  ***\*Pro\****:
+​	***Pros***
 
 
 
@@ -184,11 +184,11 @@ Let's take a look at each of this following language and see it's pro and cons:
 
 
 
-\3. Dart
+3. Dart
 
 
 
-  ***\*Pro\**:**
+  ***Pro***:
 
 
 
@@ -206,7 +206,7 @@ Let's take a look at each of this following language and see it's pro and cons:
 
 
 
-  ***\*Cons\****:
+***Cons***
 
 
 
@@ -242,17 +242,17 @@ We will also not use any parser generator in order to fully demonstrate the prat
 
 
 
-# #### Implementation
+# Implementation
 
 
 
-***\*Formal description of computational problem\****
+***Formal description of computational problem***
 
 Having chosen Dart as our language of choice and a tree walking algorithm as the chosen method of implementing our interpreter we are going to need to follow the main principles of creating an interpreter, we’ll need to parse the source code, translate it into an intermediate form of code before executing the code created by the Dart compiler. 
 
 
 
- ***\*Design of Compiler\****
+ ***Design of Compiler***
 
 First we will go through the phases of an interpreter which are: Lexical analysis, syntax analysis, semantic analysis and then direct execution.
 
@@ -262,15 +262,17 @@ We begin with lexical analysis, to briefly explain this phase, we can simplify l
 
 
 
-Next, we will discuss the parsing method being used in this implementation. The method being used here is known as the Pratt Parser also known as a top down precedence parser. Within this phase, we define the grammar for our programming language and then we use this grammar to put it against the syntax of our code to check for correct syntax. The code is evaluated in the form of an AST or an abstract syntax tree. 
+Next, we will discuss the parsing method being used in this implementation. The method being used here is known as the Pratt Parser also known as a top down precedence parser. A Pratt parser is a top down parser that works on the system of operator precedence, where the parser will store how important an operator is and uses this to determine which operation should be done first and a top down parser is one where the parser parses the input using the production rules instead of a bottom up parser where the parser uses the input and then deconstructs that input and checks it against the production rules to check for validity.  One reason we chose to do a top down parser is because it is easier to implement than a top down parser. However, there are many other types of top down parsers such as recursive descent parsers and LL parsers so why did we choose to use the Pratt parser? One documented issue of recursive descent parsers are that they suffer from backtracking  which is an issue where the parser has to go through each production rule one by one before arriving at the proper output. Pratt parsing also makes use of what are known as binding powers which are assigned to each token to determine associativity and precedence. An example of what this looks like is humans are able to evaluate the expression 1 + 2 * 3 by understanding that the asterisk binds to 2 and 3 and then the plus symbol binds 1 and the smaller expression. This shows that the asterisk symbol has a higher binding power than the plus symbol and we can do that with all other symbols for the precedence to work.  Pratt parsing also allows for different treatment depending on whether the operator token is in an infix or prefix context. An example would be a = b - c and a = b. Within Pratt parsing, the terminology for handling tokens as a prefix is null denotation and handling tokens as infix as left denotation. So a Pratt parser makes the best out of both the qualities of a recursive descent parser and an operator precedence method and we chose it because it is easy to implement and works very efficiently.
+
+Within this phase, we define the grammar for our programming language and then we use this grammar to put it against the syntax of our code to check for correct syntax. The code is evaluated in the form of an AST or an abstract syntax tree. 
 
 Typically, the next phase of an interpreter would be semantic analysis but we chose to perform this phase of the interpreter by implementing what is known as an evaluator instead. The output of a semantic analyzer is an annotated syntax tree, we chose not to use this implementation and decided that we could evaluate the code in its form after lexing and parsing has been performed. Within our code we also use what are known as entities to represent the values within tokens. Within the evaluator, the values of the code are analysed and checked for any further error outside of syntactic or lexical errors. We then use a class to check and store for variables and identifiers which are then executed within the main function of our program.
 
 
 
-# #### Evaluation
+# Evaluation
 
- ***\*Implementation Details\****
+ ***Implementation Details***
 
 The project is composed of many parts, an important part of this project is the idea of using test driven development. In order for us to be able to test every working part of our programming language, we use test cases and run our program against them to check whether our program satisfies these test cases. Separate tests are created for the different parts of the interpreter. For example, our project uses 3 tests for the lexer, parser and evaluator and using the designed test cases we check to see if the program is making the correct checks and if our program passes every test case we can be sure that each of these implemented features will be sure to work. This method of development also allows for easier debugging because we can immediately see the specific type of error the program has encountered. This allows for a better workflow and is much better than using practical testing because there is a chance you miss something within self testing and a bug can be encountered later that could cause problems. 
 
@@ -315,7 +317,7 @@ Here is an example of a test case to check whether the number data type is funct
 
 
 
-\#### Discussions
+# Discussions
 
 We had also done some practical coding to show the usages of our programming language. We were able to successfully create some examples of these programs and even some of the algorithms we learnt for our lab assignment.
 ![img](https://lh5.googleusercontent.com/PbvoCNaQVuoE9D0mUUnFR894BdL_KTs2akTNFNBGIcwp0knPqlmMKCn9tYFyrqODLqmnbYkDQIYpJEkUrStSlXO8UBfXEIbzj_eOHseFqv3meesS5-jifFyX_EXSVPqeEW_HocBL)
@@ -324,11 +326,11 @@ An example of that code writes here, this code defines an algorithm that is used
 
 
 
-# #### Conclusion and Recommendation
+# Conclusion and Recommendation
 
 In conclusion, our interpreted language, Hung-Lang 2 can be considered successful in solving our problem description. We believe that the interface of our programming language is quite easy to learn and boasts the capabilities to be able to be used for programming beginners for their early code. Simpler algorithmic problems that they will be learning within their first couple or so semesters can be done within this code, this language retains our idea of replicating an easier programming language such as python but using a syntax more similar to C. However, that is not to mean our language is all encompassing and powerful either. For example, this is a programming language that would not be able to teach students more advanced concepts such as class design and OOP. With that we believe that our programming language fulfills the needs for our target demographic which are newer programmers allowing for the much needed easier transition from learning easier programming languages such as python to an immediately different and more advanced syntax seen in languages such as Java and C
 
-# #### Program manual and Installation
+# Program manual and Installation
 
 
 
@@ -355,7 +357,7 @@ Let’s start with something simple,
 
 
 
-10 + 10
+```10 + 10```
 
 
 
@@ -369,7 +371,7 @@ Next we will take a look at the assignment statements, this is a statement (code
 
 
 
-var name = ‘hung lang’;
+```var name = ‘hung lang;```
 
 
 
@@ -393,7 +395,7 @@ Just like in other dynamic languages, if you have declared a language with a cer
 
 For example:
 
-var a = 10; var a = ‘hello’;
+```var a = 10; var a = ‘hello’;```
 
 In other programming languages, this kind of syntax may be invalid as we are using the var keyword when reassigning a value to a variable, but in hung lang 2 this is completely valid.
 
@@ -410,7 +412,7 @@ Now in order to access the data in the variable, we can use the variable name wi
 
 
 
-write(a)
+```write(a)```
 
 
 
@@ -420,7 +422,7 @@ Write can also accept infinite amount of parameter,
 
 
 
-write(a,’hello world’)
+```write(a,’hello world’)```
 
 
 
@@ -455,9 +457,9 @@ And Hung lang 2 also support some logical operators using:
 
 Usually these conditions are usually going to be used in if and else statements. The if keyword will have condition and the code to be executed if the condition is true, and else keyword that will run if the condition is false. The syntax if and else is:
 
-if(condition){code to be executed if true}
+```if(condition){code to be executed if true}```
 
-else{code to be executed if false}
+```else{code to be executed if false}```
 
 
 
@@ -465,9 +467,9 @@ The example for the if and else statement:
 
 
 
-if(or(a == b,a > b)){write(‘a is equal or higher than b’)}
+```if(or(a == b,a > b)){write(‘a is equal or higher than b’)} ```
 
-else {write(‘a is smaller than b’)}
+```else {write(‘a is smaller than b’)}```
 
 
 
@@ -479,7 +481,7 @@ Function is a block of code which only runs when it is called. You can pass data
 
 
 
-var multiplication = f(a,b){a * b}
+```var multiplication = f(a,b){a * b}```
 
 
 
@@ -487,7 +489,7 @@ The var multiplication in above has a function in it where it takes two data as 
 
 
 
-multiplication(10,3)
+```multiplication(10,3)```
 
 
 
@@ -507,39 +509,39 @@ Arrays in hung lang can be used by using some built-in function. To create the a
 
 For example of Arrays, we are going to create new array first with some books in it, in this case we will name it books:
 
-~ var books = array(‘Harry Potter’,’Maze Runner’) 
+~```var books = array(‘Harry Potter’,’Maze Runner’) ```
 
 
 
 The next thing we can do is to add new value into the array using the add function with the argument of the array name, the index, and the value. For this case we will add new book in index 2:         
 
-~ add(books,2,’Hunger Games’)    
+~ ```add(books,2,’Hunger Games’) ```
 
-And it will return [‘Harry Potter’,’Maze Runner’,’Hunger Games’]
+And it will return ```[‘Harry Potter’,’Maze Runner’,’Hunger Games’]```
 
 
 
 Now, if we want to delete the “Maze Runner” book which is in index 1 of the books array we can do:
 
-~ remove(books,1)
+~ ```remove(books,1)```
 
-And it will return [‘Harry Potter’,’Hunger Games’]
+And it will return ```[‘Harry Potter’,’Hunger Games’]```
 
 
 
 For example if we want to update the “Hunger Games” book in index 1 into “Hungry Games”:
 
-~ update(books,1,’Hungry Games’)
+~ ```update(books,1,’Hungry Games’)```
 
-And it will return [‘Harry Potter’,’Hungry Games’]
+And it will return ```[‘Harry Potter’,’Hungry Games’]```
 
 
 
 For example if we want to get the value in the books array in index 0:
 
-~ get(books,0)
+~ ```get(books,0)```
 
-And it will return ‘Harry Potter’
+And it will return ```‘Harry Potter’```
 
 
 
@@ -554,7 +556,7 @@ The each loop argument will be the element of the array in the each function whi
 
 
 
-each(books,f(a){write(a)})
+```each(books,f(a){write(a)})```
 
 
 
@@ -562,7 +564,7 @@ The example of using for loops with the args a,b,c where a = start, b = end, and
 
 
 
-for(1,5,1,f(a,b,c){write(a,b,c)})
+```for(1,5,1,f(a,b,c){write(a,b,c)})```
 
 
 
@@ -589,21 +591,21 @@ With this function it will only return the result, so if you want to convert a n
 
 
 
-var a = ‘10’
+```var a = ‘10’```
 
-var a = num(string) 
+```var a = num(string) ```
 
  
 
 This will convert the string into a number so you can do:
 
-a + 1
+```a + 1```
 
 And it will return 11, to convert it back into a String then we can use the other function
 
 
 
-var a = str(a)
+```var a = str(a)```
 
 
 
@@ -625,11 +627,11 @@ The id(data) function can be used to get hashcode. Hashcode is a number which re
 
 
 
-var a = 10
+```var a = 10```
 
-var b = a
+```var b = a```
 
-id(a) == id(b)
+```id(a) == id(b)```
 
 
 
@@ -641,9 +643,9 @@ isType(a,b) is used to check if the datatype of a is the same as datatype b. So 
 
 
 
-var a = 10
+```var a = 10```
 
-isType(a,0)
+```isType(a,0)```
 
 
 
@@ -655,7 +657,7 @@ random(max) are used when we want to generate a random number from 0 until max. 
 
 
 
-random(6)+1
+```random(6)+1```
 
 
 
@@ -667,9 +669,9 @@ len(data) can be used if we want to get the length of a string or an array. This
 
 
 
-len(‘Happy New Year’)
+```len(‘Happy New Year’)```
 
-len(books) 
+```len(books) ```
 
 
 
@@ -681,7 +683,7 @@ The last function is modulus which is a function to get the remainder of the euc
 
 
 
-mod(3,2)
+```mod(3,2)```
 
 
 
@@ -739,3 +741,7 @@ Run this on terminal:
 https://snapcraft.io/hung
 
 sudo snap install hung --edge
+
+# Demo Video Link
+
+https://www.youtube.com/watch?v=ui9mWyRaV1c&feature=youtu.be
