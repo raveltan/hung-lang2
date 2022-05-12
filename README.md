@@ -5,7 +5,7 @@
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/hung)
 
 A special programming language that is created to teach beginner with computer programming, in a way that is easy as python,
-retain c-like syntax as java but still is not very confusing too learn.
+retain C-like syntax as java but still is not very confusing too learn.
 
 # Features
 
